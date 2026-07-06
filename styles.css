@@ -1,10 +1,12 @@
 :root {
-  color-scheme: light;
-  --background: #ffffff;
-  --text: #111111;
-  --muted: #767676;
-  --line: #e7e7e7;
-  --soft: #f5f5f5;
+  color-scheme: dark;
+  --background: #0b0b0b;
+  --surface: #111111;
+  --text: #f3f1ed;
+  --muted: #9c9890;
+  --line: #2b2a27;
+  --soft: #171717;
+  --glow: #d8c8ad;
   --max: 1480px;
 }
 
@@ -33,7 +35,7 @@ a {
 
 a:hover,
 a.active {
-  color: var(--muted);
+  color: var(--glow);
 }
 
 img {
@@ -53,18 +55,19 @@ img {
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 24px;
-  min-height: 68px;
-  padding: 0 28px;
-  background: rgb(255 255 255 / 92%);
-  border-bottom: 1px solid transparent;
+  min-height: 64px;
+  padding: 0 30px;
+  background: rgb(11 11 11 / 82%);
+  border-bottom: 1px solid rgb(255 255 255 / 5%);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
 
 .brand {
   width: max-content;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 400;
+  color: var(--text);
 }
 
 .site-nav {
@@ -73,6 +76,7 @@ img {
   justify-content: flex-end;
   gap: 24px;
   font-size: 13px;
+  color: var(--muted);
 }
 
 .page-shell {
@@ -86,9 +90,9 @@ img {
   grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
   align-items: end;
   gap: 48px;
-  min-height: 42vh;
-  padding-top: 112px;
-  padding-bottom: 72px;
+  min-height: 34vh;
+  padding-top: 82px;
+  padding-bottom: 44px;
 }
 
 .kicker {
@@ -105,8 +109,9 @@ p {
 
 h1 {
   margin-bottom: 0;
-  font-size: clamp(54px, 10vw, 172px);
-  line-height: 0.88;
+  max-width: 960px;
+  font-size: clamp(54px, 8.8vw, 136px);
+  line-height: 0.9;
   font-weight: 400;
 }
 
@@ -121,10 +126,10 @@ h2 {
 }
 
 .intro-copy {
-  max-width: 360px;
+  max-width: 390px;
   margin-bottom: 22px;
   color: var(--text);
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.48;
 }
 
@@ -137,7 +142,7 @@ h2 {
 }
 
 .section {
-  padding-bottom: 116px;
+  padding-bottom: 92px;
 }
 
 .section-heading {
@@ -157,26 +162,29 @@ h2 {
 .project-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 28px 18px;
+  gap: 18px;
 }
 
 .project-tile {
+  position: relative;
   display: grid;
   grid-column: span 4;
-  gap: 10px;
+  gap: 0;
+  overflow: hidden;
+  background: var(--surface);
 }
 
 .project-tile:nth-child(6n + 1) {
-  grid-column: span 7;
+  grid-column: span 5;
 }
 
 .project-tile:nth-child(6n + 2) {
-  grid-column: span 5;
-  padding-top: 10vw;
+  grid-column: span 4;
+  padding-top: 0;
 }
 
 .project-tile:nth-child(6n + 3) {
-  grid-column: span 5;
+  grid-column: span 3;
 }
 
 .project-tile:nth-child(6n + 4) {
@@ -194,29 +202,41 @@ h2 {
   aspect-ratio: 4 / 5;
   object-fit: cover;
   background: var(--soft);
-  transition: opacity 240ms ease;
+  filter: saturate(0.9) contrast(1.03);
+  opacity: 0.88;
+  transition: opacity 240ms ease, transform 420ms ease, filter 420ms ease;
 }
 
-.project-tile:nth-child(6n + 1) img,
-.project-tile:nth-child(6n + 4) img {
-  aspect-ratio: 16 / 10;
+.project-tile:nth-child(6n + 1) img {
+  aspect-ratio: 4 / 5.4;
+}
+
+.project-tile:nth-child(6n + 2) img {
+  aspect-ratio: 4 / 4.9;
 }
 
 .project-tile:hover img {
-  opacity: 0.82;
+  opacity: 1;
+  transform: scale(1.025);
+  filter: saturate(1.04) contrast(1.06);
 }
 
 .project-meta {
+  position: absolute;
+  inset: auto 0 0;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  color: var(--muted);
+  padding: 46px 16px 16px;
+  color: rgb(243 241 237 / 72%);
   font-size: 12px;
+  background: linear-gradient(to top, rgb(0 0 0 / 74%), rgb(0 0 0 / 0));
 }
 
 .project-meta span:first-child {
-  color: var(--text);
+  color: #fff;
+  font-size: 15px;
 }
 
 .archive {
@@ -244,7 +264,7 @@ h2 {
 
 .project-page {
   max-width: 1180px;
-  padding-top: 96px;
+  padding-top: 82px;
   padding-bottom: 120px;
 }
 
@@ -282,15 +302,32 @@ h2 {
   max-height: 1120px;
   object-fit: cover;
   background: var(--soft);
+  border: 1px solid var(--line);
 }
 
 .contact {
-  min-height: calc(100vh - 68px);
+  min-height: calc(100vh - 64px);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding-top: 96px;
   padding-bottom: 56px;
+}
+
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+
+.site-footer nav {
+  display: flex;
+  gap: 18px;
 }
 
 .contact h1 {
@@ -317,9 +354,9 @@ h2 {
   .masthead {
     grid-template-columns: 1fr;
     gap: 24px;
-    min-height: 34vh;
-    padding-top: 76px;
-    padding-bottom: 46px;
+    min-height: 28vh;
+    padding-top: 62px;
+    padding-bottom: 34px;
   }
 
   h1 {
@@ -354,5 +391,11 @@ h2 {
 
   .project-description {
     margin-left: 0;
+  }
+
+  .site-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 24px 18px;
   }
 }

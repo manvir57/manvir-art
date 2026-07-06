@@ -1,6 +1,54 @@
 let projects = [];
 let site = {};
 
+const fallbackSite = {
+  name: "Manvir Khangura",
+  metaDescription: "manvir.art portfolio by Manvir Khangura.",
+  kicker: "Portfolio",
+  headline: "Manvir Khangura",
+  description: "Marketing specialist and creative focused on visual storytelling, brand presence, and culture-driven content.",
+  linkedinUrl: "https://www.linkedin.com/in/manvir-khangura",
+  instagramUrl: "https://www.instagram.com/manvir.s_/",
+  services: ["Marketing", "Creative", "Photography"],
+  contactHeading: "Available for marketing, creative direction, photography, and culture-driven content.",
+};
+
+const fallbackProjects = [
+  {
+    slug: "professional-work",
+    title: "Professional Work",
+    year: 2026,
+    category: "work",
+    description: "Selected professional marketing, creative, and visual direction work.",
+    cover: "sample/personal-02.svg",
+    images: ["sample/personal-02.svg", "sample/event-01.svg", "sample/event-02.svg"],
+    published: true,
+    featured: true,
+  },
+  {
+    slug: "safal",
+    title: "Safal",
+    year: 2026,
+    category: "work",
+    description: "A focused section for Safal project work, visuals, and campaign materials.",
+    cover: "sample/portrait-01.svg",
+    images: ["sample/portrait-01.svg", "sample/portrait-02.svg"],
+    published: true,
+    featured: true,
+  },
+  {
+    slug: "photography",
+    title: "Photography",
+    year: 2026,
+    category: "photography",
+    description: "Portrait, lifestyle, and event photography.",
+    cover: "uploads/manvir/portrait.jpg",
+    images: ["uploads/manvir/portrait.jpg", "uploads/manvir/source.jpg"],
+    published: true,
+    featured: true,
+  },
+];
+
 const views = {
   home: document.querySelectorAll('[data-view="home"]'),
   archive: document.querySelector('[data-view="archive"]'),
@@ -21,12 +69,23 @@ const projectImages = document.querySelector("#project-images");
 init();
 
 async function init() {
-  const [projectResponse, siteResponse] = await Promise.all([
-    fetch("content/projects-v2.json", { cache: "no-store" }),
-    fetch("content/site-v2.json", { cache: "no-store" }),
-  ]);
-  const projectData = await projectResponse.json();
-  site = await siteResponse.json();
+  let projectData = { projects: fallbackProjects };
+  site = fallbackSite;
+
+  try {
+    const [projectResponse, siteResponse] = await Promise.all([
+      fetch("content/projects-v2.json", { cache: "no-store" }),
+      fetch("content/site-v2.json", { cache: "no-store" }),
+    ]);
+    if (projectResponse.ok && siteResponse.ok) {
+      projectData = await projectResponse.json();
+      site = await siteResponse.json();
+    }
+  } catch {
+    projectData = { projects: fallbackProjects };
+    site = fallbackSite;
+  }
+
   projects = projectData.projects
     .filter((project) => project.published !== false)
     .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || b.year - a.year);
@@ -78,8 +137,18 @@ function renderLinks(container, data, options = {}) {
     nodes.push(link);
   }
 
+  if (data.instagramUrl) {
+    const link = document.createElement("a");
+    link.href = data.instagramUrl;
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.textContent = "Instagram";
+    nodes.push(link);
+  }
+
   const services = Array.isArray(data.services) ? data.services : [];
-  for (const service of options.fullServices ? services : services.slice(0, 3)) {
+  const shownServices = options.fullServices ? services : services.slice(0, 2);
+  for (const service of shownServices) {
     const span = document.createElement("span");
     span.textContent = service;
     nodes.push(span);
@@ -91,7 +160,7 @@ function route() {
   const raw = window.location.hash.replace(/^#\/?/, "") || "home";
   const [first, second] = raw.split("/");
 
-  setActive(first === "project" ? "galleries" : first);
+  setActive(first === "project" || first === "section" ? second || "galleries" : first);
 
   if (first === "contact") {
     showOnly("contact");
@@ -99,6 +168,11 @@ function route() {
   }
 
   if (first === "project" && second) {
+    renderProject(second);
+    return;
+  }
+
+  if (first === "section" && second) {
     renderProject(second);
     return;
   }
@@ -121,7 +195,7 @@ function showOnly(view) {
 }
 
 function renderArchive() {
-  archiveTitle.textContent = "Galleries";
+  archiveTitle.textContent = "Sections";
   archiveEmpty.hidden = projects.length > 0;
   renderGrid(archiveGrid, projects);
   showOnly("archive");
@@ -135,11 +209,12 @@ function renderProject(slug) {
   }
 
   projectBack.href = "#galleries";
-  projectBack.textContent = "Galleries";
+  projectBack.textContent = "Sections";
   projectTitle.textContent = project.title;
   projectYear.textContent = project.year;
   projectDescription.textContent = project.description || "";
-  projectImages.replaceChildren(...(project.images?.length ? project.images : [project.cover]).filter(Boolean).map(image));
+  const images = Array.isArray(project.images) && project.images.length ? project.images : [project.cover];
+  projectImages.replaceChildren(...images.filter(Boolean).map(image));
   showOnly("project");
 }
 
@@ -167,7 +242,7 @@ function projectTile(project) {
   const title = document.createElement("span");
   title.textContent = project.title;
   const year = document.createElement("span");
-  year.textContent = project.year;
+  year.textContent = project.category === "photography" ? "Gallery" : "Section";
   meta.append(title, year);
   link.append(meta);
 
