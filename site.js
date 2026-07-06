@@ -22,8 +22,8 @@ init();
 
 async function init() {
   const [projectResponse, siteResponse] = await Promise.all([
-    fetch("content/projects.json", { cache: "no-store" }),
-    fetch("content/site.json", { cache: "no-store" }),
+    fetch("content/projects-v2.json", { cache: "no-store" }),
+    fetch("content/site-v2.json", { cache: "no-store" }),
   ]);
   const projectData = await projectResponse.json();
   site = await siteResponse.json();
