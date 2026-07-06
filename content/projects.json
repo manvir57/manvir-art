@@ -1,27 +1,26 @@
 {
   "projects": [
     {
-      "slug": "photography",
-      "title": "Photography",
+      "slug": "professional-work",
+      "title": "Professional Work",
       "year": 2026,
-      "category": "photography",
-      "description": "Portrait, lifestyle, and event photography focused on mood, composition, and storytelling.",
-      "cover": "uploads/manvir/portrait.jpg",
+      "category": "work",
+      "description": "Selected professional marketing, creative, and visual direction work.",
+      "cover": "sample/personal-02.svg",
       "images": [
-        "uploads/manvir/portrait.jpg",
-        "uploads/manvir/source.jpg",
-        "https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=1800&q=85",
-        "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1800&q=85"
+        "sample/personal-02.svg",
+        "sample/event-01.svg",
+        "sample/event-02.svg"
       ],
       "published": true,
       "featured": true
     },
     {
-      "slug": "visual-study-01",
-      "title": "Visual Study 01",
+      "slug": "safal",
+      "title": "Safal",
       "year": 2026,
-      "category": "design",
-      "description": "Placeholder for a future design, campaign, or image-led case study.",
+      "category": "work",
+      "description": "A focused section for Safal project work, visuals, and campaign materials.",
       "cover": "sample/portrait-01.svg",
       "images": [
         "sample/portrait-01.svg",
@@ -31,62 +30,18 @@
       "featured": true
     },
     {
-      "slug": "social-media-management",
-      "title": "Social Media Management",
+      "slug": "photography",
+      "title": "Photography",
       "year": 2026,
-      "category": "social",
-      "description": "Content planning, post design, channel management, and brand-consistent social execution.",
-      "cover": "sample/event-02.svg",
+      "category": "photography",
+      "description": "Portrait, lifestyle, and event photography.",
+      "cover": "uploads/manvir/portrait.jpg",
       "images": [
-        "sample/event-02.svg",
-        "sample/personal-01.svg",
-        "sample/personal-02.svg"
+        "uploads/manvir/portrait.jpg",
+        "uploads/manvir/source.jpg"
       ],
       "published": true,
       "featured": true
-    },
-    {
-      "slug": "visual-study-02",
-      "title": "Visual Study 02",
-      "year": 2026,
-      "category": "design",
-      "description": "Placeholder for a future gallery, brand system, or content series.",
-      "cover": "sample/event-01.svg",
-      "images": [
-        "sample/event-01.svg",
-        "sample/event-02.svg"
-      ],
-      "published": true,
-      "featured": false
-    },
-    {
-      "slug": "marketing",
-      "title": "Marketing",
-      "year": 2026,
-      "category": "marketing",
-      "description": "Developing marketing work across campaign thinking, audience strategy, and creative direction.",
-      "cover": "sample/personal-02.svg",
-      "images": [
-        "sample/personal-02.svg",
-        "sample/portrait-01.svg",
-        "sample/event-01.svg"
-      ],
-      "published": true,
-      "featured": false
-    },
-    {
-      "slug": "visual-study-03",
-      "title": "Visual Study 03",
-      "year": 2026,
-      "category": "design",
-      "description": "Placeholder for a future personal project or selected visual experiment.",
-      "cover": "sample/personal-01.svg",
-      "images": [
-        "sample/personal-01.svg",
-        "sample/personal-02.svg"
-      ],
-      "published": true,
-      "featured": false
     }
   ]
 }
