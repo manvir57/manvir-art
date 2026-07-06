@@ -17,19 +17,47 @@
       "featured": true
     },
     {
+      "slug": "visual-study-01",
+      "title": "Visual Study 01",
+      "year": 2026,
+      "category": "design",
+      "description": "Placeholder for a future design, campaign, or image-led case study.",
+      "cover": "sample/portrait-01.svg",
+      "images": [
+        "sample/portrait-01.svg",
+        "sample/portrait-02.svg"
+      ],
+      "published": true,
+      "featured": true
+    },
+    {
       "slug": "social-media-management",
       "title": "Social Media Management",
       "year": 2026,
       "category": "social",
       "description": "Content planning, post design, channel management, and brand-consistent social execution.",
-      "cover": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1400&q=85",
+      "cover": "sample/event-02.svg",
       "images": [
-        "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1800&q=85",
-        "https://images.unsplash.com/photo-1611926653458-09294b3142bf?auto=format&fit=crop&w=1800&q=85",
-        "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1800&q=85"
+        "sample/event-02.svg",
+        "sample/personal-01.svg",
+        "sample/personal-02.svg"
       ],
       "published": true,
       "featured": true
+    },
+    {
+      "slug": "visual-study-02",
+      "title": "Visual Study 02",
+      "year": 2026,
+      "category": "design",
+      "description": "Placeholder for a future gallery, brand system, or content series.",
+      "cover": "sample/event-01.svg",
+      "images": [
+        "sample/event-01.svg",
+        "sample/event-02.svg"
+      ],
+      "published": true,
+      "featured": false
     },
     {
       "slug": "marketing",
@@ -37,11 +65,25 @@
       "year": 2026,
       "category": "marketing",
       "description": "Developing marketing work across campaign thinking, audience strategy, and creative direction.",
-      "cover": "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=85",
+      "cover": "sample/personal-02.svg",
       "images": [
-        "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1800&q=85",
-        "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=1800&q=85",
-        "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1800&q=85"
+        "sample/personal-02.svg",
+        "sample/portrait-01.svg",
+        "sample/event-01.svg"
+      ],
+      "published": true,
+      "featured": false
+    },
+    {
+      "slug": "visual-study-03",
+      "title": "Visual Study 03",
+      "year": 2026,
+      "category": "design",
+      "description": "Placeholder for a future personal project or selected visual experiment.",
+      "cover": "sample/personal-01.svg",
+      "images": [
+        "sample/personal-01.svg",
+        "sample/personal-02.svg"
       ],
       "published": true,
       "featured": false

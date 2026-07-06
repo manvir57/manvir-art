@@ -1,6 +1,3 @@
-const categories = ["design", "photography", "social", "marketing"];
-const titleCase = (value) => `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
-
 let projects = [];
 let site = {};
 
@@ -41,7 +38,7 @@ async function init() {
 }
 
 function renderSite(data) {
-  document.title = `${data.name || "Portfolio"} - Portfolio`;
+  document.title = data.name || "manvir.art";
   setText("[data-site='name']", data.name);
   setText("[data-site='kicker']", data.kicker);
   setText("[data-site='headline']", data.headline || data.name);
@@ -94,7 +91,7 @@ function route() {
   const raw = window.location.hash.replace(/^#\/?/, "") || "home";
   const [first, second] = raw.split("/");
 
-  setActive(first);
+  setActive(first === "project" ? "galleries" : first);
 
   if (first === "contact") {
     showOnly("contact");
@@ -106,8 +103,8 @@ function route() {
     return;
   }
 
-  if (categories.includes(first)) {
-    renderArchive(first);
+  if (first === "galleries") {
+    renderArchive();
     return;
   }
 
@@ -123,11 +120,10 @@ function showOnly(view) {
   views.contact.hidden = view !== "contact";
 }
 
-function renderArchive(category) {
-  const categoryProjects = projects.filter((project) => project.category === category);
-  archiveTitle.textContent = titleCase(category);
-  archiveEmpty.hidden = categoryProjects.length > 0;
-  renderGrid(archiveGrid, categoryProjects);
+function renderArchive() {
+  archiveTitle.textContent = "Galleries";
+  archiveEmpty.hidden = projects.length > 0;
+  renderGrid(archiveGrid, projects);
   showOnly("archive");
 }
 
@@ -138,8 +134,8 @@ function renderProject(slug) {
     return;
   }
 
-  projectBack.href = `#${project.category}`;
-  projectBack.textContent = project.category;
+  projectBack.href = "#galleries";
+  projectBack.textContent = "Galleries";
   projectTitle.textContent = project.title;
   projectYear.textContent = project.year;
   projectDescription.textContent = project.description || "";

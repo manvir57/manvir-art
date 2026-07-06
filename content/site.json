@@ -1,16 +1,16 @@
 {
-  "name": "Manvir Khangura",
-  "metaDescription": "Manvir Khangura portfolio: graphic design, photography, social media management, and marketing.",
-  "kicker": "Creative portfolio",
-  "headline": "Manvir Khangura",
-  "description": "Graphic design, photography, social media management, and emerging marketing work.",
+  "name": "manvir.art",
+  "metaDescription": "manvir.art portfolio by Manvir Khangura.",
+  "kicker": "Portfolio",
+  "headline": "manvir.art",
+  "description": "Design, photography, social content, and visual direction.",
   "heroImage": "uploads/manvir/portrait.jpg",
   "linkedinUrl": "https://www.linkedin.com/in/manvir-khangura",
   "services": [
-    "Graphic Design",
+    "Design",
     "Photography",
-    "Social Media",
+    "Social",
     "Marketing"
   ],
-  "contactHeading": "For design, content, photography, and marketing collaborations."
+  "contactHeading": "Available for design, content, photography, and marketing collaborations."
 }
