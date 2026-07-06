@@ -124,7 +124,6 @@ h2 {
   max-width: 360px;
   margin-bottom: 22px;
   color: var(--text);
-  font-family: Georgia, "Times New Roman", serif;
   font-size: 16px;
   line-height: 1.48;
 }
@@ -269,7 +268,6 @@ h2 {
 .project-description {
   max-width: 620px;
   margin: 0 0 42px 160px;
-  font-family: Georgia, "Times New Roman", serif;
   font-size: 16px;
   line-height: 1.5;
 }
