@@ -1,0 +1,50 @@
+{
+  "projects": [
+    {
+      "slug": "photography",
+      "title": "Photography",
+      "year": 2026,
+      "category": "photography",
+      "description": "Portrait, lifestyle, and event photography focused on mood, composition, and storytelling.",
+      "cover": "uploads/manvir/portrait.jpg",
+      "images": [
+        "uploads/manvir/portrait.jpg",
+        "uploads/manvir/source.jpg",
+        "https://images.unsplash.com/photo-1512316609839-ce289d3eba0a?auto=format&fit=crop&w=1800&q=85",
+        "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1800&q=85"
+      ],
+      "published": true,
+      "featured": true
+    },
+    {
+      "slug": "social-media-management",
+      "title": "Social Media Management",
+      "year": 2026,
+      "category": "social",
+      "description": "Content planning, post design, channel management, and brand-consistent social execution.",
+      "cover": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1400&q=85",
+      "images": [
+        "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1800&q=85",
+        "https://images.unsplash.com/photo-1611926653458-09294b3142bf?auto=format&fit=crop&w=1800&q=85",
+        "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1800&q=85"
+      ],
+      "published": true,
+      "featured": true
+    },
+    {
+      "slug": "marketing",
+      "title": "Marketing",
+      "year": 2026,
+      "category": "marketing",
+      "description": "Developing marketing work across campaign thinking, audience strategy, and creative direction.",
+      "cover": "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=85",
+      "images": [
+        "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1800&q=85",
+        "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=1800&q=85",
+        "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1800&q=85"
+      ],
+      "published": true,
+      "featured": false
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Manvir Khangura portfolio: graphic design, photography, social media management, and marketing." data-site="metaDescription" />
+    <title>Manvir Khangura - Portfolio</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css?v=20260630-dark-mode" />
+    <script type="module" src="site.js?v=20260630-dark-mode"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#home" data-route="home" data-site="name">Manvir Khangura</a>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="#design" data-route="design">Design</a>
+        <a href="#photography" data-route="photography">Photography</a>
+        <a href="#social" data-route="social">Social</a>
+        <a href="#marketing" data-route="marketing">Marketing</a>
+        <a href="#contact" data-route="contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="intro" data-view="home" aria-labelledby="intro-title">
+        <img
+          class="hero-image"
+          src="uploads/manvir/portrait.jpg"
+          alt=""
+          data-site="heroImage"
+        />
+        <div class="hero-copy">
+          <p class="kicker" data-site="kicker">Creative portfolio</p>
+          <h1 id="intro-title" data-site="headline">Manvir Khangura</h1>
+          <p class="intro-copy" data-site="description">Graphic design, photography, social media management, and emerging marketing work.</p>
+          <div class="link-row" aria-label="Social links" data-site="heroLinks">
+            <a href="https://www.linkedin.com/in/manvir-khangura" target="_blank" rel="noreferrer">LinkedIn</a>
+            <span>Graphic Design</span>
+            <span>Photography</span>
+            <span>Social Media</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="category-strip" data-view="home" aria-label="Portfolio categories">
+        <a href="#design" data-route="design">
+          <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=85" alt="" />
+          <span>Design</span>
+        </a>
+        <a href="#photography" data-route="photography">
+          <img src="uploads/manvir/portrait.jpg" alt="" />
+          <span>Photography</span>
+        </a>
+        <a href="#social" data-route="social">
+          <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1200&q=85" alt="" />
+          <span>Social</span>
+        </a>
+      </section>
+
+      <section class="section page-shell" data-view="home" aria-labelledby="work-title">
+        <div class="section-heading">
+          <h2 id="work-title">Work</h2>
+          <a href="#design" data-route="design">View design</a>
+        </div>
+        <div class="project-grid" id="featured-grid"></div>
+      </section>
+
+      <section class="archive page-shell" data-view="archive" hidden>
+        <div class="page-title">
+          <p class="kicker">Archive</p>
+          <h1 id="archive-title">Portrait</h1>
+        </div>
+        <div class="project-grid" id="archive-grid"></div>
+        <p class="empty-state" id="archive-empty" hidden>No published work yet.</p>
+      </section>
+
+      <article class="project-page page-shell" data-view="project" hidden>
+        <header class="project-header">
+          <a class="back-link" id="project-back" href="#home">Back</a>
+          <h1 id="project-title"></h1>
+          <p id="project-year"></p>
+        </header>
+        <p class="project-description" id="project-description"></p>
+        <div class="image-stack" id="project-images"></div>
+      </article>
+
+      <section class="contact page-shell" data-view="contact" hidden aria-labelledby="contact-title">
+        <p class="kicker">Contact</p>
+        <h1 id="contact-title" data-site="contactHeading">For design, content, photography, and marketing collaborations.</h1>
+        <div class="contact-list" data-site="contactLinks">
+          <a href="https://www.linkedin.com/in/manvir-khangura" target="_blank" rel="noreferrer">LinkedIn</a>
+          <span>Graphic Design</span>
+          <span>Photography</span>
+          <span>Social Media Management</span>
+          <span>Marketing</span>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
