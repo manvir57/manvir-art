@@ -1,0 +1,116 @@
+.admin-body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 10%, rgb(216 200 173 / 10%), transparent 28rem),
+    var(--background);
+}
+
+.admin-shell {
+  width: min(760px, 100%);
+  min-height: 100vh;
+  display: grid;
+  align-items: center;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+.admin-panel {
+  border: 1px solid var(--line);
+  background: rgb(17 17 17 / 88%);
+  padding: 28px;
+}
+
+.admin-panel h1 {
+  max-width: 620px;
+  margin-bottom: 20px;
+  font-size: clamp(42px, 8vw, 88px);
+}
+
+.admin-copy {
+  max-width: 520px;
+  color: var(--muted);
+}
+
+.admin-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.admin-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.admin-form input,
+.admin-form select {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: #080808;
+  color: var(--text);
+  padding: 13px 14px;
+  font: inherit;
+}
+
+.admin-form input:focus,
+.admin-form select:focus {
+  outline: 1px solid var(--glow);
+  border-color: var(--glow);
+}
+
+.admin-form button,
+.ghost-button {
+  width: max-content;
+  border: 1px solid var(--glow);
+  background: var(--glow);
+  color: #0b0b0b;
+  padding: 12px 16px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ghost-button {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--line);
+}
+
+.admin-status {
+  min-height: 20px;
+  margin: 18px 0 0;
+  color: var(--muted);
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.admin-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.admin-list a {
+  color: var(--glow);
+  overflow-wrap: anywhere;
+}
+
+code {
+  color: var(--glow);
+}
+
+@media (max-width: 640px) {
+  .admin-panel {
+    padding: 22px;
+  }
+
+  .admin-topbar {
+    flex-direction: column;
+  }
+}

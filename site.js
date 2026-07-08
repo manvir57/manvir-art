@@ -90,10 +90,49 @@ async function init() {
     .filter((project) => project.published !== false)
     .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || b.year - a.year);
 
+  await mergeUploadedImages();
+
   renderSite(site);
   renderGrid(featuredGrid, projects);
   window.addEventListener("hashchange", route);
   route();
+}
+
+async function mergeUploadedImages() {
+  const config = window.PORTFOLIO_ADMIN_CONFIG || {};
+  const isConfigured =
+    config.supabaseUrl &&
+    config.supabaseAnonKey &&
+    !config.supabaseUrl.includes("YOUR_PROJECT_ID") &&
+    !config.supabaseAnonKey.includes("YOUR_SUPABASE_ANON_KEY");
+
+  if (!isConfigured) return;
+
+  try {
+    const endpoint = `${config.supabaseUrl}/rest/v1/portfolio_images?select=gallery_slug,image_url,caption,created_at&order=created_at.desc`;
+    const response = await fetch(endpoint, {
+      headers: {
+        apikey: config.supabaseAnonKey,
+        Authorization: `Bearer ${config.supabaseAnonKey}`,
+      },
+    });
+    if (!response.ok) return;
+
+    const uploadedImages = await response.json();
+    for (const project of projects) {
+      const galleryImages = uploadedImages
+        .filter((imageRecord) => imageRecord.gallery_slug === project.slug)
+        .map((imageRecord) => imageRecord.image_url)
+        .filter(Boolean);
+
+      if (galleryImages.length) {
+        project.images = galleryImages.concat(project.images || []);
+        project.cover = galleryImages[0];
+      }
+    }
+  } catch {
+    // Keep the static portfolio working if Supabase is unreachable.
+  }
 }
 
 function renderSite(data) {

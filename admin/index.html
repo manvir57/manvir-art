@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Admin - Manvir Khangura</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../styles.css?v=20260707-admin" />
+    <link rel="stylesheet" href="admin.css?v=20260707-admin" />
+    <script src="../content/admin-config.js"></script>
+    <script type="module" src="admin.js?v=20260707-admin"></script>
+  </head>
+  <body class="admin-body">
+    <main class="admin-shell">
+      <section class="admin-panel" id="login-panel">
+        <p class="kicker">Admin</p>
+        <h1>Sign in</h1>
+        <p class="admin-copy">Use the Supabase account you created for this portfolio.</p>
+        <form class="admin-form" id="login-form">
+          <label>
+            <span>Email</span>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            <span>Password</span>
+            <input id="password" name="password" type="password" autocomplete="current-password" required />
+          </label>
+          <button type="submit">Log in</button>
+        </form>
+        <p class="admin-status" id="login-status"></p>
+      </section>
+
+      <section class="admin-panel" id="upload-panel" hidden>
+        <div class="admin-topbar">
+          <div>
+            <p class="kicker">Admin</p>
+            <h1>Upload images</h1>
+          </div>
+          <button type="button" class="ghost-button" id="logout-button">Log out</button>
+        </div>
+
+        <form class="admin-form" id="upload-form">
+          <label>
+            <span>Gallery</span>
+            <select id="gallery" name="gallery" required>
+              <option value="professional-work">Professional Work</option>
+              <option value="safal">Safal</option>
+              <option value="photography">Photography</option>
+            </select>
+          </label>
+          <label>
+            <span>Caption or note</span>
+            <input id="caption" name="caption" type="text" placeholder="Optional" />
+          </label>
+          <label>
+            <span>Images</span>
+            <input id="images" name="images" type="file" accept="image/*" multiple required />
+          </label>
+          <button type="submit">Upload</button>
+        </form>
+        <p class="admin-status" id="upload-status"></p>
+        <div class="admin-list" id="upload-list"></div>
+      </section>
+
+      <section class="admin-panel" id="setup-panel" hidden>
+        <p class="kicker">Setup needed</p>
+        <h1>Connect Supabase</h1>
+        <p class="admin-copy">
+          This admin page is installed, but it needs your Supabase project URL and anon key in
+          <code>content/admin-config.js</code>.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
