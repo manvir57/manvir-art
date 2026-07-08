@@ -15,7 +15,10 @@
 }
 
 html {
-  background: var(--background);
+  background:
+    radial-gradient(circle at 18% 2%, rgb(216 200 173 / 8%), transparent 24rem),
+    radial-gradient(circle at 86% 18%, rgb(255 255 255 / 4%), transparent 20rem),
+    var(--background);
   color: var(--text);
   font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -26,6 +29,7 @@ body {
   font-size: 14px;
   line-height: 1.45;
   letter-spacing: 0;
+  background: transparent;
 }
 
 a {
@@ -91,8 +95,8 @@ img {
   align-items: end;
   gap: 48px;
   min-height: 34vh;
-  padding-top: 82px;
-  padding-bottom: 44px;
+  padding-top: 78px;
+  padding-bottom: 42px;
 }
 
 .kicker {
@@ -172,6 +176,8 @@ h2 {
   gap: 0;
   overflow: hidden;
   background: var(--surface);
+  border: 1px solid rgb(255 255 255 / 6%);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 18%);
 }
 
 .project-tile:nth-child(6n + 1) {
@@ -228,10 +234,16 @@ h2 {
   align-items: baseline;
   justify-content: space-between;
   gap: 16px;
-  padding: 46px 16px 16px;
+  padding: 58px 16px 16px;
   color: rgb(243 241 237 / 72%);
   font-size: 12px;
   background: linear-gradient(to top, rgb(0 0 0 / 74%), rgb(0 0 0 / 0));
+  transform: translateY(6px);
+  transition: transform 240ms ease;
+}
+
+.project-tile:hover .project-meta {
+  transform: translateY(0);
 }
 
 .project-meta span:first-child {

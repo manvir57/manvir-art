@@ -6,8 +6,8 @@
     <meta name="robots" content="noindex, nofollow" />
     <title>Admin - Manvir Khangura</title>
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="../styles.css?v=20260707-admin" />
-    <link rel="stylesheet" href="admin.css?v=20260707-admin" />
+    <link rel="stylesheet" href="../styles.css?v=20260707-sleek-admin" />
+    <link rel="stylesheet" href="admin.css?v=20260707-sleek-admin" />
     <script src="../content/admin-config.js"></script>
     <script type="module" src="admin.js?v=20260707-admin"></script>
   </head>
@@ -57,8 +57,22 @@
             <span>Images</span>
             <input id="images" name="images" type="file" accept="image/*" multiple required />
           </label>
-          <button type="submit">Upload</button>
+          <button type="submit">Review images</button>
         </form>
+        <section class="review-panel" id="review-panel" hidden>
+          <div class="review-heading">
+            <div>
+              <p class="kicker">Review</p>
+              <h2>Confirm upload</h2>
+            </div>
+            <button type="button" class="ghost-button" id="clear-review-button">Clear</button>
+          </div>
+          <div class="preview-grid" id="preview-grid"></div>
+          <div class="review-actions">
+            <p class="admin-status" id="review-summary"></p>
+            <button type="button" id="confirm-upload-button">Confirm upload</button>
+          </div>
+        </section>
         <p class="admin-status" id="upload-status"></p>
         <div class="admin-list" id="upload-list"></div>
       </section>

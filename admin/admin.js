@@ -8,6 +8,14 @@ const logoutButton = document.querySelector("#logout-button");
 const loginStatus = document.querySelector("#login-status");
 const uploadStatus = document.querySelector("#upload-status");
 const uploadList = document.querySelector("#upload-list");
+const reviewPanel = document.querySelector("#review-panel");
+const previewGrid = document.querySelector("#preview-grid");
+const reviewSummary = document.querySelector("#review-summary");
+const confirmUploadButton = document.querySelector("#confirm-upload-button");
+const clearReviewButton = document.querySelector("#clear-review-button");
+
+let pendingUpload = null;
+let previewUrls = [];
 
 const isConfigured =
   config.supabaseUrl &&
@@ -17,10 +25,15 @@ const isConfigured =
 
 let supabase = null;
 
-if (!isConfigured) {
-  loginPanel.hidden = true;
-  setupPanel.hidden = false;
-} else {
+bootstrap();
+
+async function bootstrap() {
+  if (!isConfigured) {
+    loginPanel.hidden = true;
+    setupPanel.hidden = false;
+    return;
+  }
+
   const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
   supabase = createClient(config.supabaseUrl, config.supabaseAnonKey);
   await init();
@@ -58,8 +71,9 @@ logoutButton.addEventListener("click", async () => {
 
 uploadForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  uploadStatus.textContent = "Uploading...";
+  uploadStatus.textContent = "";
   uploadList.replaceChildren();
+  clearPreviewUrls();
 
   const form = new FormData(uploadForm);
   const gallerySlug = String(form.get("gallery") || "");
@@ -70,6 +84,17 @@ uploadForm.addEventListener("submit", async (event) => {
     uploadStatus.textContent = "Choose at least one image.";
     return;
   }
+
+  pendingUpload = { gallerySlug, caption, files };
+  renderPreviews(pendingUpload);
+});
+
+confirmUploadButton.addEventListener("click", async () => {
+  if (!pendingUpload) return;
+
+  const { gallerySlug, caption, files } = pendingUpload;
+  uploadStatus.textContent = "Uploading...";
+  confirmUploadButton.disabled = true;
 
   const results = [];
   for (const file of files) {
@@ -85,7 +110,22 @@ uploadForm.addEventListener("submit", async (event) => {
 
   if (!failures.length) {
     uploadForm.reset();
+    pendingUpload = null;
+    reviewPanel.hidden = true;
+    previewGrid.replaceChildren();
+    clearPreviewUrls();
   }
+
+  confirmUploadButton.disabled = false;
+});
+
+clearReviewButton.addEventListener("click", () => {
+  pendingUpload = null;
+  uploadForm.reset();
+  reviewPanel.hidden = true;
+  previewGrid.replaceChildren();
+  uploadStatus.textContent = "";
+  clearPreviewUrls();
 });
 
 async function uploadImage({ file, gallerySlug, caption }) {
@@ -138,4 +178,65 @@ function renderResult(result) {
   link.textContent = result.fileName;
   item.append("Uploaded ", link);
   return item;
+}
+
+function renderPreviews({ gallerySlug, files }) {
+  previewGrid.replaceChildren();
+  reviewPanel.hidden = false;
+
+  const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
+  reviewSummary.textContent = `${files.length} image${files.length === 1 ? "" : "s"} selected for ${formatGallery(gallerySlug)} · ${formatBytes(totalBytes)} total`;
+
+  for (const file of files) {
+    const url = URL.createObjectURL(file);
+    previewUrls.push(url);
+
+    const item = document.createElement("article");
+    item.className = "preview-card";
+
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "";
+
+    const meta = document.createElement("div");
+    meta.className = "preview-meta";
+
+    const name = document.createElement("span");
+    name.textContent = file.name;
+
+    const size = document.createElement("span");
+    size.textContent = formatBytes(file.size);
+
+    meta.append(name, size);
+    item.append(img, meta);
+    previewGrid.append(item);
+  }
+}
+
+function clearPreviewUrls() {
+  for (const url of previewUrls) {
+    URL.revokeObjectURL(url);
+  }
+  previewUrls = [];
+}
+
+function formatBytes(bytes) {
+  if (!Number.isFinite(bytes)) return "0 B";
+  const units = ["B", "KB", "MB", "GB"];
+  let size = bytes;
+  let unitIndex = 0;
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex += 1;
+  }
+  return `${size.toFixed(size >= 10 || unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`;
+}
+
+function formatGallery(slug) {
+  const labels = {
+    "professional-work": "Professional Work",
+    safal: "Safal",
+    photography: "Photography",
+  };
+  return labels[slug] || slug;
 }
