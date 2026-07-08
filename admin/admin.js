@@ -245,8 +245,7 @@ function formatBytes(bytes) {
 
 function formatGallery(slug) {
   const labels = {
-    "professional-work": "Professional Work",
-    safal: "Safal",
+    projects: "Projects",
     photography: "Photography",
   };
   return labels[slug] || slug;

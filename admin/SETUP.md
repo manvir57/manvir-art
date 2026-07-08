@@ -25,7 +25,7 @@ Open Supabase SQL Editor and run:
 ```sql
 create table if not exists public.portfolio_images (
   id uuid primary key default gen_random_uuid(),
-  gallery_slug text not null check (gallery_slug in ('professional-work', 'safal', 'photography')),
+  gallery_slug text not null check (gallery_slug in ('projects', 'photography')),
   image_url text not null,
   storage_path text not null,
   caption text,
@@ -36,6 +36,20 @@ create table if not exists public.portfolio_images (
 );
 
 alter table public.portfolio_images enable row level security;
+
+alter table public.portfolio_images
+drop constraint if exists portfolio_images_gallery_slug_check;
+
+update public.portfolio_images
+set gallery_slug = 'projects'
+where gallery_slug = 'professional-work';
+
+delete from public.portfolio_images
+where gallery_slug = 'safal';
+
+alter table public.portfolio_images
+add constraint portfolio_images_gallery_slug_check
+check (gallery_slug in ('projects', 'photography'));
 
 grant usage on schema public to anon, authenticated;
 grant select on public.portfolio_images to anon, authenticated;

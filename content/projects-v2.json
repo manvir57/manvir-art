@@ -1,11 +1,11 @@
 {
   "projects": [
     {
-      "slug": "professional-work",
-      "title": "Professional Work",
+      "slug": "projects",
+      "title": "Projects",
       "year": 2026,
       "category": "work",
-      "description": "Selected professional marketing, creative, and visual direction work.",
+      "description": "Selected marketing, creative, and visual direction projects.",
       "cover": "sample/personal-02.svg",
       "images": [
         "sample/personal-02.svg",
@@ -16,29 +16,15 @@
       "featured": true
     },
     {
-      "slug": "safal",
-      "title": "Safal",
-      "year": 2026,
-      "category": "work",
-      "description": "A focused section for Safal project work, visuals, and campaign materials.",
-      "cover": "sample/portrait-01.svg",
-      "images": [
-        "sample/portrait-01.svg",
-        "sample/portrait-02.svg"
-      ],
-      "published": true,
-      "featured": true
-    },
-    {
       "slug": "photography",
       "title": "Photography",
       "year": 2026,
       "category": "photography",
       "description": "Portrait, lifestyle, and event photography.",
-      "cover": "uploads/manvir/portrait.jpg",
+      "cover": "sample/portrait-01.svg",
       "images": [
-        "uploads/manvir/portrait.jpg",
-        "uploads/manvir/source.jpg"
+        "sample/portrait-01.svg",
+        "sample/portrait-02.svg"
       ],
       "published": true,
       "featured": true

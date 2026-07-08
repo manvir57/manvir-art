@@ -15,24 +15,13 @@ const fallbackSite = {
 
 const fallbackProjects = [
   {
-    slug: "professional-work",
-    title: "Professional Work",
+    slug: "projects",
+    title: "Projects",
     year: 2026,
     category: "work",
-    description: "Selected professional marketing, creative, and visual direction work.",
+    description: "Selected marketing, creative, and visual direction projects.",
     cover: "sample/personal-02.svg",
     images: ["sample/personal-02.svg", "sample/event-01.svg", "sample/event-02.svg"],
-    published: true,
-    featured: true,
-  },
-  {
-    slug: "safal",
-    title: "Safal",
-    year: 2026,
-    category: "work",
-    description: "A focused section for Safal project work, visuals, and campaign materials.",
-    cover: "sample/portrait-01.svg",
-    images: ["sample/portrait-01.svg", "sample/portrait-02.svg"],
     published: true,
     featured: true,
   },
@@ -42,8 +31,8 @@ const fallbackProjects = [
     year: 2026,
     category: "photography",
     description: "Portrait, lifestyle, and event photography.",
-    cover: "uploads/manvir/portrait.jpg",
-    images: ["uploads/manvir/portrait.jpg", "uploads/manvir/source.jpg"],
+    cover: "sample/portrait-01.svg",
+    images: ["sample/portrait-01.svg", "sample/portrait-02.svg"],
     published: true,
     featured: true,
   },
@@ -197,7 +186,9 @@ function renderLinks(container, data, options = {}) {
 
 function route() {
   const raw = window.location.hash.replace(/^#\/?/, "") || "home";
-  const [first, second] = raw.split("/");
+  let [first, second] = raw.split("/");
+  if (second === "professional-work") second = "projects";
+  if (second === "safal") second = "projects";
 
   setActive(first === "project" || first === "section" ? second || "galleries" : first);
 
