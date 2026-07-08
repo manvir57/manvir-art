@@ -158,7 +158,8 @@ async function uploadImage({ file, gallerySlug, caption }) {
   });
 
   if (insertError) {
-    return { fileName: file.name, imageUrl, error: insertError.message };
+    await supabase.storage.from(config.storageBucket || "portfolio-images").remove([path]);
+    return { fileName: file.name, imageUrl, error: friendlyDatabaseError(insertError.message) };
   }
 
   return { fileName: file.name, imageUrl };
@@ -178,6 +179,16 @@ function renderResult(result) {
   link.textContent = result.fileName;
   item.append("Uploaded ", link);
   return item;
+}
+
+function friendlyDatabaseError(message) {
+  if (/permission denied for table portfolio_images/i.test(message)) {
+    return "Database permission denied. Run the latest supabase/setup.sql file in Supabase SQL Editor, then try again.";
+  }
+  if (/row-level security/i.test(message)) {
+    return "Blocked by Supabase Row Level Security. Check that the insert policy for portfolio_images allows authenticated users.";
+  }
+  return message;
 }
 
 function renderPreviews({ gallerySlug, files }) {

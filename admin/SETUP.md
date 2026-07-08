@@ -37,6 +37,10 @@ create table if not exists public.portfolio_images (
 
 alter table public.portfolio_images enable row level security;
 
+grant usage on schema public to anon, authenticated;
+grant select on public.portfolio_images to anon, authenticated;
+grant insert on public.portfolio_images to authenticated;
+
 create policy "Anyone can read portfolio images"
 on public.portfolio_images
 for select
@@ -62,6 +66,12 @@ on storage.objects
 for insert
 to authenticated
 with check (bucket_id = 'portfolio-images');
+
+create policy "Authenticated admin can remove failed portfolio uploads"
+on storage.objects
+for delete
+to authenticated
+using (bucket_id = 'portfolio-images');
 ```
 
 ## 4. Add config
