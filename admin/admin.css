@@ -1,60 +1,76 @@
 .admin-body {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 14% 8%, rgb(216 200 173 / 16%), transparent 24rem),
-    radial-gradient(circle at 88% 18%, rgb(255 255 255 / 7%), transparent 18rem),
-    linear-gradient(135deg, #070707, #10100f 46%, #090909);
+  background: var(--paper);
 }
 
 .admin-shell {
-  width: min(920px, 100%);
+  width: min(1080px, 100%);
   min-height: 100vh;
   display: grid;
   align-items: center;
   margin: 0 auto;
-  padding: 56px 20px;
+  padding: 56px 24px;
 }
 
 .admin-panel {
-  border: 1px solid rgb(255 255 255 / 10%);
-  background: linear-gradient(145deg, rgb(20 20 19 / 88%), rgb(9 9 9 / 82%));
-  box-shadow: 0 24px 80px rgb(0 0 0 / 38%);
-  padding: clamp(24px, 4vw, 38px);
+  border: 1px solid var(--line-strong);
+  background: rgb(255 255 255 / 88%);
+  padding: clamp(24px, 4vw, 52px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .admin-panel h1 {
-  max-width: 660px;
-  margin-bottom: 18px;
-  font-size: clamp(46px, 8vw, 96px);
+  max-width: 760px;
+  margin: 10px 0 22px;
+  color: var(--ink);
+  font-size: clamp(54px, 8vw, 112px);
+  line-height: 0.86;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
 }
 
 .admin-copy {
-  max-width: 540px;
-  color: var(--muted);
+  max-width: 620px;
+  margin-bottom: 0;
+  color: #2a2a2a;
+  font-size: 18px;
+  line-height: 1.55;
 }
 
 .admin-form {
   display: grid;
-  gap: 18px;
-  margin-top: 30px;
+  gap: 22px;
+  margin-top: 34px;
 }
 
 .admin-form label {
   display: grid;
-  gap: 8px;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.admin-form label > span {
+  font-family: var(--mono);
   color: var(--muted);
   font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .admin-form input,
 .admin-form select {
   width: 100%;
-  border: 1px solid rgb(255 255 255 / 12%);
-  background: rgb(5 5 5 / 82%);
-  color: var(--text);
-  padding: 14px 14px;
-  font: inherit;
-  transition: border-color 180ms ease, background 180ms ease;
+  min-height: 56px;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink);
+  padding: 15px 16px;
+  font-size: 18px;
+  transition: border-color 160ms ease, background 160ms ease;
 }
 
 .admin-form input[type="file"] {
@@ -62,57 +78,66 @@
 }
 
 .admin-form input::file-selector-button {
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--text);
+  min-height: 36px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper-soft);
+  color: var(--ink);
   margin-right: 14px;
-  padding: 9px 12px;
-  font: inherit;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   cursor: pointer;
 }
 
 .admin-form input:focus,
 .admin-form select:focus {
   outline: 0;
-  background: rgb(10 10 10 / 92%);
-  border-color: var(--glow);
+  background: #fff;
+  border-color: var(--accent-2);
 }
 
 .admin-form button,
 .review-actions button,
 .ghost-button {
   width: max-content;
-  border: 1px solid var(--glow);
-  background: var(--glow);
-  color: #0b0b0b;
-  padding: 12px 16px;
-  font: inherit;
+  min-height: 46px;
+  border: 1px solid var(--ink);
+  background: var(--accent);
+  color: var(--ink);
+  padding: 0 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: transform 180ms ease, opacity 180ms ease, border-color 180ms ease;
 }
 
 .admin-form button:hover,
 .review-actions button:hover,
 .ghost-button:hover {
-  transform: translateY(-1px);
+  background: var(--ink);
+  color: #fff;
 }
 
 .admin-form button:disabled,
 .review-actions button:disabled {
   cursor: wait;
-  opacity: 0.58;
+  opacity: 0.56;
 }
 
 .ghost-button {
-  background: transparent;
-  color: var(--text);
-  border-color: rgb(255 255 255 / 16%);
+  background: #fff;
+  border-color: var(--line-strong);
 }
 
 .admin-status {
-  min-height: 20px;
+  min-height: 24px;
   margin: 18px 0 0;
-  color: var(--muted);
+  color: #2a2a2a;
+  font-size: 16px;
+  line-height: 1.45;
 }
 
 .admin-topbar,
@@ -125,46 +150,51 @@
 }
 
 .review-panel {
-  margin-top: 28px;
-  padding-top: 26px;
-  border-top: 1px solid var(--line);
+  margin-top: 34px;
+  padding-top: 30px;
+  border-top: 1px solid var(--line-strong);
 }
 
 .review-heading h2 {
-  color: var(--text);
-  font-size: 24px;
+  margin: 8px 0 0;
+  color: var(--ink);
+  font-size: clamp(32px, 4vw, 54px);
+  line-height: 0.95;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
 }
 
 .preview-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 18px;
+  gap: 14px;
+  margin-top: 22px;
 }
 
 .preview-card {
   overflow: hidden;
-  border: 1px solid rgb(255 255 255 / 10%);
-  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  background: #fff;
 }
 
 .preview-card img {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  filter: saturate(0.92) contrast(1.02);
+  filter: contrast(1.04) saturate(0.96);
 }
 
 .preview-meta {
   display: grid;
-  gap: 4px;
-  padding: 10px;
+  gap: 6px;
+  padding: 12px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .preview-meta span:first-child {
-  color: var(--text);
+  color: var(--ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -172,27 +202,34 @@
 
 .admin-list {
   display: grid;
-  gap: 10px;
+  gap: 12px;
   margin-top: 24px;
 }
 
 .admin-list p {
   margin: 0;
-  color: var(--muted);
+  color: #2a2a2a;
+  font-size: 16px;
 }
 
-.admin-list a {
-  color: var(--glow);
-  overflow-wrap: anywhere;
-}
-
+.admin-list a,
 code {
-  color: var(--glow);
+  color: var(--accent-2);
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 760px) {
   .admin-shell {
-    padding: 18px;
+    align-items: start;
+    padding: 16px;
+  }
+
+  .admin-panel {
+    padding: 22px 16px;
+  }
+
+  .admin-panel h1 {
+    font-size: clamp(46px, 15vw, 76px);
   }
 
   .admin-topbar,

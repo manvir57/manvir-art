@@ -6,7 +6,7 @@ const fallbackSite = {
   metaDescription: "manvir.art portfolio by Manvir Khangura.",
   kicker: "Portfolio",
   headline: "Manvir Khangura",
-  description: "Marketing specialist and creative focused on visual storytelling, brand presence, and culture-driven content.",
+  description: "Marketing/Creative",
   linkedinUrl: "https://www.linkedin.com/in/manvir-khangura",
   instagramUrl: "https://www.instagram.com/manvir.s_/",
   services: ["Marketing", "Creative", "Photography"],
@@ -54,6 +54,9 @@ const projectType = document.querySelector("#project-type");
 const projectTitle = document.querySelector("#project-title");
 const projectDescription = document.querySelector("#project-description");
 const projectImages = document.querySelector("#project-images");
+const themeToggle = document.querySelector("#theme-toggle");
+const controlsToggle = document.querySelector("#controls-toggle");
+const siteControls = document.querySelector("#site-controls");
 
 const atmosphere = {
   canvas: document.querySelector("#atmosphere"),
@@ -62,12 +65,17 @@ const atmosphere = {
   brush: "soft",
   pointerX: 0.5,
   pointerY: 0.5,
+  pointerPx: window.innerWidth * 0.5,
+  pointerPy: window.innerHeight * 0.5,
+  lastPointerPx: window.innerWidth * 0.5,
+  lastPointerPy: window.innerHeight * 0.5,
   time: 0,
 };
 
 init();
 
 async function init() {
+  setupTheme();
   setupAtmosphere();
   setupControlBoard();
 
@@ -98,6 +106,28 @@ async function init() {
   renderProjectList(featuredGrid, projects);
   window.addEventListener("hashchange", route);
   route();
+}
+
+function setupTheme() {
+  const savedTheme = localStorage.getItem("manvir-theme");
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  setTheme(savedTheme || (prefersDark ? "dark" : "light"));
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      setTheme(nextTheme);
+      localStorage.setItem("manvir-theme", nextTheme);
+    });
+  }
+}
+
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  if (!themeToggle) return;
+  const isDark = theme === "dark";
+  themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+  themeToggle.dataset.mode = isDark ? "dark" : "light";
 }
 
 async function mergeUploadedImages() {
@@ -150,7 +180,7 @@ function renderSite(data) {
     metaDescription.setAttribute("content", data.metaDescription);
   }
 
-  renderLinks(document.querySelector("[data-site='heroLinks']"), data);
+  renderLinks(document.querySelector("[data-site='heroLinks']"), data, { iconsOnly: true });
   renderLinks(document.querySelector("[data-site='contactLinks']"), data, { fullServices: true });
 }
 
@@ -164,27 +194,42 @@ function setText(selector, value) {
 function renderLinks(container, data, options = {}) {
   if (!container) return;
   const nodes = [];
-  if (data.linkedinUrl) nodes.push(textLink("LinkedIn", data.linkedinUrl));
-  if (data.instagramUrl) nodes.push(textLink("Instagram", data.instagramUrl));
+  if (data.linkedinUrl) nodes.push(textLink("LinkedIn", data.linkedinUrl, options.iconsOnly));
+  if (data.instagramUrl) nodes.push(textLink("Instagram", data.instagramUrl, options.iconsOnly));
 
-  const services = Array.isArray(data.services) ? data.services : [];
-  const shownServices = options.fullServices ? services : services.slice(0, 2);
-  for (const service of shownServices) {
-    const span = document.createElement("span");
-    span.textContent = service;
-    nodes.push(span);
+  if (!options.iconsOnly) {
+    const services = Array.isArray(data.services) ? data.services : [];
+    const shownServices = options.fullServices ? services : services.slice(0, 2);
+    for (const service of shownServices) {
+      const span = document.createElement("span");
+      span.textContent = service;
+      nodes.push(span);
+    }
   }
 
   container.replaceChildren(...nodes);
 }
 
-function textLink(label, href) {
+function textLink(label, href, iconOnly = false) {
   const link = document.createElement("a");
   link.href = href;
   link.target = "_blank";
   link.rel = "noreferrer";
-  link.textContent = label;
+  link.setAttribute("aria-label", label);
+  if (iconOnly) {
+    link.className = "social-icon";
+    link.innerHTML = socialIcon(label);
+  } else {
+    link.textContent = label;
+  }
   return link;
+}
+
+function socialIcon(label) {
+  if (label === "LinkedIn") {
+    return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.1 8.8h3.3v10.7H5.1V8.8Zm.2-3.2c0-1 .8-1.7 1.7-1.7 1 0 1.7.7 1.7 1.7S8 7.3 7 7.3c-.9 0-1.7-.7-1.7-1.7Zm5.1 3.2h3.1v1.5h.1c.4-.8 1.5-1.7 3.1-1.7 3.3 0 3.9 2.2 3.9 5v5.9h-3.3v-5.2c0-1.2 0-2.8-1.7-2.8s-1.9 1.3-1.9 2.7v5.3h-3.3V8.8Z"/></svg>`;
+  }
+  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4Zm0 2.2A1.8 1.8 0 0 0 6.2 8v8A1.8 1.8 0 0 0 8 17.8h8a1.8 1.8 0 0 0 1.8-1.8V8A1.8 1.8 0 0 0 16 6.2H8Zm4 3.1a2.7 2.7 0 1 1 0 5.4 2.7 2.7 0 0 1 0-5.4Zm0 2.1a.6.6 0 1 0 0 1.2.6.6 0 0 0 0-1.2Zm3.2-2.8a1 1 0 1 1 2 0 1 1 0 0 1-2 0Z"/></svg>`;
 }
 
 function route() {
@@ -298,6 +343,16 @@ function setActive(routeName) {
 }
 
 function setupControlBoard() {
+  if (controlsToggle && siteControls) {
+    controlsToggle.addEventListener("click", () => {
+      const isOpening = siteControls.hidden;
+      siteControls.hidden = !isOpening;
+      controlsToggle.classList.toggle("active", isOpening);
+      controlsToggle.setAttribute("aria-expanded", String(isOpening));
+      controlsToggle.setAttribute("aria-label", isOpening ? "Hide visual controls" : "Show visual controls");
+    });
+  }
+
   document.querySelectorAll("[data-cell]").forEach((button) => {
     button.addEventListener("click", () => {
       atmosphere.cell = Number(button.dataset.cell) || 12;
@@ -325,6 +380,10 @@ function setupAtmosphere() {
   resizeAtmosphere();
   window.addEventListener("resize", resizeAtmosphere);
   window.addEventListener("pointermove", (event) => {
+    atmosphere.lastPointerPx = atmosphere.pointerPx;
+    atmosphere.lastPointerPy = atmosphere.pointerPy;
+    atmosphere.pointerPx = event.clientX;
+    atmosphere.pointerPy = event.clientY;
     atmosphere.pointerX = event.clientX / window.innerWidth;
     atmosphere.pointerY = event.clientY / window.innerHeight;
   });
@@ -347,9 +406,10 @@ function drawAtmosphere() {
   const width = window.innerWidth;
   const height = window.innerHeight;
   atmosphere.time += 0.006;
+  const colors = atmosphereColors();
 
   ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = "#0b0908";
+  ctx.fillStyle = colors.background;
   ctx.fillRect(0, 0, width, height);
 
   const gradient = ctx.createRadialGradient(
@@ -360,19 +420,31 @@ function drawAtmosphere() {
     height * atmosphere.pointerY,
     Math.max(width, height) * 0.72
   );
-  gradient.addColorStop(0, "rgba(229, 204, 151, 0.28)");
-  gradient.addColorStop(0.42, "rgba(89, 112, 105, 0.16)");
-  gradient.addColorStop(1, "rgba(11, 9, 8, 0)");
+  gradient.addColorStop(0, colors.glowA);
+  gradient.addColorStop(0.44, colors.glowB);
+  gradient.addColorStop(1, colors.glowEnd);
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
-  drawGridField(ctx, width, height);
+  drawGridField(ctx, width, height, colors);
   requestAnimationFrame(drawAtmosphere);
 }
 
-function drawGridField(ctx, width, height) {
+function atmosphereColors() {
+  const styles = getComputedStyle(document.documentElement);
+  return {
+    background: styles.getPropertyValue("--canvas-bg").trim() || "#f4f1ea",
+    glowA: styles.getPropertyValue("--canvas-glow-a").trim() || "rgba(111, 143, 154, 0.16)",
+    glowB: styles.getPropertyValue("--canvas-glow-b").trim() || "rgba(143, 169, 154, 0.1)",
+    glowEnd: styles.getPropertyValue("--canvas-glow-end").trim() || "rgba(255, 255, 255, 0)",
+    gridSoft: styles.getPropertyValue("--canvas-grid-soft").trim() || "143, 169, 154",
+    gridInk: styles.getPropertyValue("--canvas-grid-ink").trim() || "23, 21, 18",
+  };
+}
+
+function drawGridField(ctx, width, height, colors) {
   const cell = atmosphere.cell;
-  const alpha = atmosphere.brush === "ink" ? 0.3 : atmosphere.brush === "static" ? 0.18 : 0.24;
+  const alpha = atmosphere.brush === "ink" ? 0.2 : atmosphere.brush === "static" ? 0.08 : 0.11;
   ctx.lineWidth = atmosphere.brush === "ink" ? 1.4 : 0.8;
 
   for (let y = -cell; y < height + cell; y += cell) {
@@ -384,9 +456,9 @@ function drawGridField(ctx, width, height) {
       const drift = Math.cos(y * 0.01 + atmosphere.time * 5) * 4;
       const pull = Math.max(0, 1 - distance * 2.8);
       const size = cell * (0.18 + pull * 0.52 + wave * 0.04);
-      const hue = atmosphere.brush === "static" ? "205, 205, 196" : "224, 194, 137";
+      const hue = atmosphere.brush === "static" ? colors.gridInk : atmosphere.brush === "ink" ? colors.gridInk : colors.gridSoft;
 
-      ctx.strokeStyle = `rgba(${hue}, ${alpha + pull * 0.16})`;
+      ctx.strokeStyle = `rgba(${hue}, ${alpha + pull * 0.1})`;
       ctx.beginPath();
       ctx.rect(x + drift + wave * pull * 10, y - wave * pull * 7, size, size);
       ctx.stroke();
