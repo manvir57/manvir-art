@@ -14,6 +14,10 @@ const reviewSummary = document.querySelector("#review-summary");
 const confirmUploadButton = document.querySelector("#confirm-upload-button");
 const clearReviewButton = document.querySelector("#clear-review-button");
 
+const targetMinBytes = 2 * 1024 * 1024;
+const targetMaxBytes = 5 * 1024 * 1024;
+const maxImageEdge = 3200;
+
 let pendingUpload = null;
 let previewUrls = [];
 
@@ -85,7 +89,11 @@ uploadForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  pendingUpload = { gallerySlug, caption, files };
+  uploadStatus.textContent = "Preparing image previews...";
+  const preparedFiles = await prepareFiles(files);
+  uploadStatus.textContent = "";
+
+  pendingUpload = { gallerySlug, caption, files: preparedFiles };
   renderPreviews(pendingUpload);
 });
 
@@ -129,6 +137,7 @@ clearReviewButton.addEventListener("click", () => {
 });
 
 async function uploadImage({ file, gallerySlug, caption }) {
+  const displayName = file.originalName || file.name;
   const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-");
   const path = `${gallerySlug}/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
 
@@ -141,7 +150,7 @@ async function uploadImage({ file, gallerySlug, caption }) {
     });
 
   if (uploadError) {
-    return { fileName: file.name, error: uploadError.message };
+    return { fileName: displayName, error: uploadError.message };
   }
 
   const { data } = supabase.storage.from(config.storageBucket || "portfolio-images").getPublicUrl(path);
@@ -152,17 +161,17 @@ async function uploadImage({ file, gallerySlug, caption }) {
     image_url: imageUrl,
     storage_path: path,
     caption,
-    file_name: file.name,
+    file_name: file.originalName || file.name,
     file_size: file.size,
     content_type: file.type,
   });
 
   if (insertError) {
     await supabase.storage.from(config.storageBucket || "portfolio-images").remove([path]);
-    return { fileName: file.name, imageUrl, error: friendlyDatabaseError(insertError.message) };
+    return { fileName: displayName, imageUrl, error: friendlyDatabaseError(insertError.message) };
   }
 
-  return { fileName: file.name, imageUrl };
+  return { fileName: displayName, imageUrl };
 }
 
 function renderResult(result) {
@@ -196,7 +205,7 @@ function renderPreviews({ gallerySlug, files }) {
   reviewPanel.hidden = false;
 
   const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
-  reviewSummary.textContent = `${files.length} image${files.length === 1 ? "" : "s"} selected for ${formatGallery(gallerySlug)} · ${formatBytes(totalBytes)} total`;
+  reviewSummary.textContent = `${files.length} image${files.length === 1 ? "" : "s"} ready for ${formatGallery(gallerySlug)} - ${formatBytes(totalBytes)} total after resizing`;
 
   for (const file of files) {
     const url = URL.createObjectURL(file);
@@ -213,15 +222,108 @@ function renderPreviews({ gallerySlug, files }) {
     meta.className = "preview-meta";
 
     const name = document.createElement("span");
-    name.textContent = file.name;
+    name.textContent = file.originalName || file.name;
 
     const size = document.createElement("span");
-    size.textContent = formatBytes(file.size);
+    size.textContent = file.originalSize
+      ? `${formatBytes(file.size)} upload / ${formatBytes(file.originalSize)} original`
+      : formatBytes(file.size);
 
     meta.append(name, size);
     item.append(img, meta);
     previewGrid.append(item);
   }
+}
+
+async function prepareFiles(files) {
+  const prepared = [];
+  for (const file of files) {
+    prepared.push(await resizeImageForUpload(file));
+  }
+  return prepared;
+}
+
+async function resizeImageForUpload(file) {
+  if (!file.type.startsWith("image/") || file.type === "image/svg+xml") {
+    return withOriginalMeta(file, file);
+  }
+
+  if (file.size <= targetMaxBytes && file.type === "image/jpeg") {
+    return withOriginalMeta(file, file);
+  }
+
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    const scale = Math.min(1, maxImageEdge / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const context = canvas.getContext("2d", { alpha: false });
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, width, height);
+    context.drawImage(bitmap, 0, 0, width, height);
+    if (typeof bitmap.close === "function") {
+      bitmap.close();
+    }
+
+    const blob = await findBestJpegBlob(canvas);
+    const resizedName = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+    const resizedFile = new File([blob], resizedName, {
+      type: "image/jpeg",
+      lastModified: Date.now(),
+    });
+    return withOriginalMeta(resizedFile, file);
+  } catch (error) {
+    console.warn("Image resize failed; uploading original file instead.", error);
+    return withOriginalMeta(file, file);
+  }
+}
+
+async function findBestJpegBlob(canvas) {
+  let low = 0.58;
+  let high = 0.92;
+  let bestUnderMax = null;
+  let bestNearMin = null;
+
+  for (let index = 0; index < 7; index += 1) {
+    const quality = (low + high) / 2;
+    const blob = await canvasToJpegBlob(canvas, quality);
+
+    if (blob.size <= targetMaxBytes) {
+      bestUnderMax = blob;
+      if (blob.size >= targetMinBytes) return blob;
+      bestNearMin = blob;
+      low = quality;
+    } else {
+      high = quality;
+    }
+  }
+
+  return bestUnderMax || bestNearMin || canvasToJpegBlob(canvas, 0.58);
+}
+
+function canvasToJpegBlob(canvas, quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error("Could not resize this image."));
+      },
+      "image/jpeg",
+      quality
+    );
+  });
+}
+
+function withOriginalMeta(file, originalFile) {
+  Object.defineProperties(file, {
+    originalName: { value: originalFile.name },
+    originalSize: { value: originalFile.size },
+  });
+  return file;
 }
 
 function clearPreviewUrls() {
