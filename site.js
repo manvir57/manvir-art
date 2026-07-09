@@ -50,14 +50,27 @@ const archiveGrid = document.querySelector("#archive-grid");
 const archiveTitle = document.querySelector("#archive-title");
 const archiveEmpty = document.querySelector("#archive-empty");
 const projectBack = document.querySelector("#project-back");
+const projectType = document.querySelector("#project-type");
 const projectTitle = document.querySelector("#project-title");
-const projectYear = document.querySelector("#project-year");
 const projectDescription = document.querySelector("#project-description");
 const projectImages = document.querySelector("#project-images");
+
+const atmosphere = {
+  canvas: document.querySelector("#atmosphere"),
+  context: null,
+  cell: 12,
+  brush: "soft",
+  pointerX: 0.5,
+  pointerY: 0.5,
+  time: 0,
+};
 
 init();
 
 async function init() {
+  setupAtmosphere();
+  setupControlBoard();
+
   let projectData = { projects: fallbackProjects };
   site = fallbackSite;
 
@@ -77,12 +90,12 @@ async function init() {
 
   projects = projectData.projects
     .filter((project) => project.published !== false)
-    .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || b.year - a.year);
+    .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)) || Number(b.year) - Number(a.year));
 
   await mergeUploadedImages();
 
   renderSite(site);
-  renderGrid(featuredGrid, projects);
+  renderProjectList(featuredGrid, projects);
   window.addEventListener("hashchange", route);
   route();
 }
@@ -137,11 +150,6 @@ function renderSite(data) {
     metaDescription.setAttribute("content", data.metaDescription);
   }
 
-  const heroImage = document.querySelector("[data-site='heroImage']");
-  if (heroImage && data.heroImage) {
-    heroImage.src = data.heroImage;
-  }
-
   renderLinks(document.querySelector("[data-site='heroLinks']"), data);
   renderLinks(document.querySelector("[data-site='contactLinks']"), data, { fullServices: true });
 }
@@ -156,23 +164,8 @@ function setText(selector, value) {
 function renderLinks(container, data, options = {}) {
   if (!container) return;
   const nodes = [];
-  if (data.linkedinUrl) {
-    const link = document.createElement("a");
-    link.href = data.linkedinUrl;
-    link.target = "_blank";
-    link.rel = "noreferrer";
-    link.textContent = "LinkedIn";
-    nodes.push(link);
-  }
-
-  if (data.instagramUrl) {
-    const link = document.createElement("a");
-    link.href = data.instagramUrl;
-    link.target = "_blank";
-    link.rel = "noreferrer";
-    link.textContent = "Instagram";
-    nodes.push(link);
-  }
+  if (data.linkedinUrl) nodes.push(textLink("LinkedIn", data.linkedinUrl));
+  if (data.instagramUrl) nodes.push(textLink("Instagram", data.instagramUrl));
 
   const services = Array.isArray(data.services) ? data.services : [];
   const shownServices = options.fullServices ? services : services.slice(0, 2);
@@ -181,14 +174,23 @@ function renderLinks(container, data, options = {}) {
     span.textContent = service;
     nodes.push(span);
   }
+
   container.replaceChildren(...nodes);
+}
+
+function textLink(label, href) {
+  const link = document.createElement("a");
+  link.href = href;
+  link.target = "_blank";
+  link.rel = "noreferrer";
+  link.textContent = label;
+  return link;
 }
 
 function route() {
   const raw = window.location.hash.replace(/^#\/?/, "") || "home";
   let [first, second] = raw.split("/");
-  if (second === "professional-work") second = "projects";
-  if (second === "safal") second = "projects";
+  if (second === "professional-work" || second === "safal") second = "projects";
 
   setActive(first === "project" || first === "section" ? second || "galleries" : first);
 
@@ -197,12 +199,7 @@ function route() {
     return;
   }
 
-  if (first === "project" && second) {
-    renderProject(second);
-    return;
-  }
-
-  if (first === "section" && second) {
+  if ((first === "project" || first === "section") && second) {
     renderProject(second);
     return;
   }
@@ -227,7 +224,7 @@ function showOnly(view) {
 function renderArchive() {
   archiveTitle.textContent = "Sections";
   archiveEmpty.hidden = projects.length > 0;
-  renderGrid(archiveGrid, projects);
+  renderProjectList(archiveGrid, projects);
   showOnly("archive");
 }
 
@@ -238,52 +235,59 @@ function renderProject(slug) {
     return;
   }
 
-  projectBack.href = "#galleries";
-  projectBack.textContent = "Sections";
+  projectBack.href = "#home";
+  projectBack.textContent = "Back home";
+  projectType.textContent = `${project.category || "gallery"} / ${project.year || "now"}`;
   projectTitle.textContent = project.title;
-  projectYear.textContent = project.year;
   projectDescription.textContent = project.description || "";
   const images = Array.isArray(project.images) && project.images.length ? project.images : [project.cover];
-  projectImages.replaceChildren(...images.filter(Boolean).map(image));
+  projectImages.replaceChildren(...images.filter(Boolean).map((src, index) => galleryImage(src, index)));
   showOnly("project");
+  window.scrollTo({ top: 0, behavior: "auto" });
 }
 
-function renderGrid(container, items) {
-  container.replaceChildren(...items.map(projectTile));
+function renderProjectList(container, items) {
+  container.replaceChildren(...items.map((project, index) => projectRow(project, index)));
 }
 
-function projectTile(project) {
+function projectRow(project, index) {
   const link = document.createElement("a");
-  link.className = "project-tile";
+  link.className = "project-row";
   link.href = `#project/${project.slug}`;
+  link.style.setProperty("--row-index", index);
 
-  if (project.cover) {
-    link.append(image(project.cover));
-  } else {
-    const placeholder = document.createElement("div");
-    placeholder.className = "image-placeholder";
-    placeholder.setAttribute("aria-hidden", "true");
-    link.append(placeholder);
-  }
-
-  const meta = document.createElement("span");
-  meta.className = "project-meta";
+  const number = document.createElement("span");
+  number.className = "project-number";
+  number.textContent = String(index + 1).padStart(2, "0");
 
   const title = document.createElement("span");
+  title.className = "project-row-title";
   title.textContent = project.title;
-  const year = document.createElement("span");
-  year.textContent = project.category === "photography" ? "Gallery" : "Section";
-  meta.append(title, year);
-  link.append(meta);
 
+  const description = document.createElement("span");
+  description.className = "project-row-description";
+  description.textContent = project.description || "";
+
+  const media = document.createElement("span");
+  media.className = "project-row-media";
+  if (project.cover) {
+    media.append(galleryImage(project.cover, index));
+  }
+
+  const type = document.createElement("span");
+  type.className = "project-row-type";
+  type.textContent = project.category === "photography" ? "Gallery" : "Selected work";
+
+  link.append(number, title, description, media, type);
   return link;
 }
 
-function image(src) {
+function galleryImage(src, index = 0) {
   const img = document.createElement("img");
   img.src = src;
   img.alt = "";
-  img.loading = "lazy";
+  img.loading = index < 2 ? "eager" : "lazy";
+  img.decoding = "async";
   return img;
 }
 
@@ -291,4 +295,101 @@ function setActive(routeName) {
   document.querySelectorAll("[data-route]").forEach((link) => {
     link.classList.toggle("active", link.dataset.route === routeName);
   });
+}
+
+function setupControlBoard() {
+  document.querySelectorAll("[data-cell]").forEach((button) => {
+    button.addEventListener("click", () => {
+      atmosphere.cell = Number(button.dataset.cell) || 12;
+      setButtonGroup(button, "[data-cell]");
+    });
+  });
+
+  document.querySelectorAll("[data-brush]").forEach((button) => {
+    button.addEventListener("click", () => {
+      atmosphere.brush = button.dataset.brush || "soft";
+      setButtonGroup(button, "[data-brush]");
+    });
+  });
+}
+
+function setButtonGroup(activeButton, selector) {
+  document.querySelectorAll(selector).forEach((button) => {
+    button.classList.toggle("active", button === activeButton);
+  });
+}
+
+function setupAtmosphere() {
+  if (!atmosphere.canvas) return;
+  atmosphere.context = atmosphere.canvas.getContext("2d");
+  resizeAtmosphere();
+  window.addEventListener("resize", resizeAtmosphere);
+  window.addEventListener("pointermove", (event) => {
+    atmosphere.pointerX = event.clientX / window.innerWidth;
+    atmosphere.pointerY = event.clientY / window.innerHeight;
+  });
+  requestAnimationFrame(drawAtmosphere);
+}
+
+function resizeAtmosphere() {
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  atmosphere.canvas.width = Math.floor(window.innerWidth * ratio);
+  atmosphere.canvas.height = Math.floor(window.innerHeight * ratio);
+  atmosphere.canvas.style.width = "100%";
+  atmosphere.canvas.style.height = "100%";
+  atmosphere.context.setTransform(ratio, 0, 0, ratio, 0, 0);
+}
+
+function drawAtmosphere() {
+  const ctx = atmosphere.context;
+  if (!ctx) return;
+
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  atmosphere.time += 0.006;
+
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = "#0b0908";
+  ctx.fillRect(0, 0, width, height);
+
+  const gradient = ctx.createRadialGradient(
+    width * atmosphere.pointerX,
+    height * atmosphere.pointerY,
+    20,
+    width * atmosphere.pointerX,
+    height * atmosphere.pointerY,
+    Math.max(width, height) * 0.72
+  );
+  gradient.addColorStop(0, "rgba(229, 204, 151, 0.28)");
+  gradient.addColorStop(0.42, "rgba(89, 112, 105, 0.16)");
+  gradient.addColorStop(1, "rgba(11, 9, 8, 0)");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+
+  drawGridField(ctx, width, height);
+  requestAnimationFrame(drawAtmosphere);
+}
+
+function drawGridField(ctx, width, height) {
+  const cell = atmosphere.cell;
+  const alpha = atmosphere.brush === "ink" ? 0.3 : atmosphere.brush === "static" ? 0.18 : 0.24;
+  ctx.lineWidth = atmosphere.brush === "ink" ? 1.4 : 0.8;
+
+  for (let y = -cell; y < height + cell; y += cell) {
+    for (let x = -cell; x < width + cell; x += cell) {
+      const dx = x / width - atmosphere.pointerX;
+      const dy = y / height - atmosphere.pointerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const wave = Math.sin(x * 0.012 + y * 0.018 + atmosphere.time * 8);
+      const drift = Math.cos(y * 0.01 + atmosphere.time * 5) * 4;
+      const pull = Math.max(0, 1 - distance * 2.8);
+      const size = cell * (0.18 + pull * 0.52 + wave * 0.04);
+      const hue = atmosphere.brush === "static" ? "205, 205, 196" : "224, 194, 137";
+
+      ctx.strokeStyle = `rgba(${hue}, ${alpha + pull * 0.16})`;
+      ctx.beginPath();
+      ctx.rect(x + drift + wave * pull * 10, y - wave * pull * 7, size, size);
+      ctx.stroke();
+    }
+  }
 }

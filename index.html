@@ -3,14 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Manvir Khangura portfolio: graphic design, photography, social media management, and marketing." data-site="metaDescription" />
+    <meta name="description" content="Manvir Khangura portfolio: marketing, creative direction, photography, and culture-driven content." data-site="metaDescription" />
     <title>Manvir Khangura - Portfolio</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=20260707-admin" />
+    <link rel="stylesheet" href="styles.css?v=20260709-character" />
     <script src="content/admin-config.js"></script>
-    <script type="module" src="site.js?v=20260707-admin"></script>
+    <script type="module" src="site.js?v=20260709-character"></script>
   </head>
   <body>
+    <canvas class="atmosphere" id="atmosphere" aria-hidden="true"></canvas>
+
     <header class="site-header">
       <a class="brand" href="#home" data-route="home" data-site="name">Manvir Khangura</a>
       <nav class="site-nav" aria-label="Primary navigation">
@@ -21,52 +23,95 @@
     </header>
 
     <main>
-      <section class="masthead page-shell" data-view="home" aria-labelledby="intro-title">
-        <div>
-          <p class="kicker" data-site="kicker">Portfolio</p>
-          <h1 id="intro-title" data-site="headline">Manvir Khangura</h1>
-        </div>
-        <div class="masthead-aside">
-          <p class="intro-copy" data-site="description">Marketing specialist and creative focused on visual storytelling, brand presence, and culture-driven content.</p>
-          <div class="link-row" aria-label="Social links" data-site="heroLinks">
-            <a href="https://www.linkedin.com/in/manvir-khangura" target="_blank" rel="noreferrer">LinkedIn</a>
-            <a href="https://www.instagram.com/manvir.s_/" target="_blank" rel="noreferrer">Instagram</a>
-            <span>Marketing</span>
-            <span>Creative</span>
+      <section class="hero page-shell" data-view="home" aria-labelledby="intro-title">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="kicker" data-site="kicker">Portfolio</p>
+            <h1 id="intro-title" data-site="headline">Manvir Khangura</h1>
+            <p class="hero-statement" data-site="description">Marketing specialist and creative focused on visual storytelling, brand presence, and culture-driven content.</p>
           </div>
+          <aside class="control-board" aria-label="Visual controls">
+            <div class="board-row">
+              <span>Cell</span>
+              <button type="button" data-cell="18">L</button>
+              <button type="button" data-cell="12" class="active">M</button>
+              <button type="button" data-cell="7">S</button>
+            </div>
+            <div class="board-row">
+              <span>Brush</span>
+              <button type="button" data-brush="soft" class="active">Soft</button>
+              <button type="button" data-brush="ink">Ink</button>
+              <button type="button" data-brush="static">Static</button>
+            </div>
+            <p>Move through the page and the background redraws itself: a small studio wall for brand systems, photos, and half-formed ideas.</p>
+          </aside>
+        </div>
+
+        <div class="signal-strip" aria-label="Capabilities" data-site="heroLinks">
+          <a href="https://www.linkedin.com/in/manvir-khangura" target="_blank" rel="noreferrer">LinkedIn</a>
+          <a href="https://www.instagram.com/manvir.s_/" target="_blank" rel="noreferrer">Instagram</a>
+          <span>Marketing</span>
+          <span>Creative</span>
         </div>
       </section>
 
-      <section class="section page-shell work-index" data-view="home" aria-labelledby="work-title">
-        <div class="section-heading">
-          <h2 id="work-title">Selected sections</h2>
-          <a href="#galleries" data-route="galleries">View all sections</a>
+      <section class="studio-note page-shell" data-view="home" aria-labelledby="note-title">
+        <p class="eyebrow">Point of view</p>
+        <h2 id="note-title">Make the work feel like it came from somewhere.</h2>
+        <div class="note-columns">
+          <p>Good creative direction is not a stack of nice assets. It is choosing the right temperature, pacing, copy, crop, platform, and moment until the thing starts to feel inevitable.</p>
+          <p>Manvir works across marketing, photography, and visual systems for projects that need personality without losing clarity.</p>
         </div>
-        <div class="project-grid" id="featured-grid"></div>
+      </section>
+
+      <section class="work-index page-shell" data-view="home" aria-labelledby="work-title">
+        <div class="section-heading">
+          <p class="eyebrow">Index</p>
+          <h2 id="work-title">Two rooms, one practice.</h2>
+        </div>
+        <div class="project-list" id="featured-grid"></div>
+      </section>
+
+      <section class="process page-shell" data-view="home" aria-label="Process">
+        <div class="process-cell">
+          <span>01</span>
+          <h3>Frame</h3>
+          <p>Find the angle before making the asset.</p>
+        </div>
+        <div class="process-cell">
+          <span>02</span>
+          <h3>Make</h3>
+          <p>Build the campaign, photograph the scene, shape the system.</p>
+        </div>
+        <div class="process-cell">
+          <span>03</span>
+          <h3>Refine</h3>
+          <p>Cut what is average and keep what feels specific.</p>
+        </div>
       </section>
 
       <section class="archive page-shell" data-view="archive" hidden>
         <div class="page-title">
-          <p class="kicker">Archive</p>
+          <p class="eyebrow">Archive</p>
           <h1 id="archive-title">Sections</h1>
         </div>
-        <div class="project-grid" id="archive-grid"></div>
+        <div class="project-list" id="archive-grid"></div>
         <p class="empty-state" id="archive-empty" hidden>No published work yet.</p>
       </section>
 
       <article class="project-page page-shell" data-view="project" hidden>
         <header class="project-header">
           <a class="back-link" id="project-back" href="#home">Back</a>
+          <p class="eyebrow" id="project-type">Gallery</p>
           <h1 id="project-title"></h1>
-          <p id="project-year"></p>
+          <p id="project-description"></p>
         </header>
-        <p class="project-description" id="project-description"></p>
         <div class="image-stack" id="project-images"></div>
       </article>
 
       <section class="contact page-shell" data-view="contact" hidden aria-labelledby="contact-title">
-        <p class="kicker">Contact</p>
-        <h1 id="contact-title" data-site="contactHeading">For design, content, photography, and marketing collaborations.</h1>
+        <p class="eyebrow">Contact</p>
+        <h1 id="contact-title" data-site="contactHeading">Available for marketing, creative direction, photography, and culture-driven content.</h1>
         <div class="contact-list" data-site="contactLinks">
           <a href="https://www.linkedin.com/in/manvir-khangura" target="_blank" rel="noreferrer">LinkedIn</a>
           <a href="https://www.instagram.com/manvir.s_/" target="_blank" rel="noreferrer">Instagram</a>
@@ -76,8 +121,9 @@
         </div>
       </section>
     </main>
+
     <footer class="site-footer">
-      <span>© 2026 Manvir Khangura</span>
+      <span>2026 / Manvir Khangura</span>
       <nav aria-label="Footer links">
         <a href="https://www.instagram.com/manvir.s_/" target="_blank" rel="noreferrer">Instagram</a>
         <a href="https://www.linkedin.com/in/manvir-khangura" target="_blank" rel="noreferrer">LinkedIn</a>
