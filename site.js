@@ -4,7 +4,7 @@ let site = {};
 const fallbackSite = {
   name: "Manvir Khangura",
   metaDescription: "manvir.art portfolio by Manvir Khangura.",
-  kicker: "Portfolio",
+  kicker: "Visual Archive",
   headline: "Manvir Khangura",
   description: "Marketing/Creative",
   linkedinUrl: "https://www.linkedin.com/in/manvir-khangura",
@@ -30,7 +30,7 @@ const fallbackProjects = [
     title: "Photography",
     year: 2026,
     category: "photography",
-    description: "Portrait, lifestyle, and event photography.",
+    description: "A collection of polaroids I have taken over the years. SX-70 and OneStep2.",
     cover: "sample/portrait-01.svg",
     images: ["sample/portrait-01.svg", "sample/portrait-02.svg"],
     published: true,
@@ -280,15 +280,38 @@ function renderProject(slug) {
     return;
   }
 
+  const isPhotography = project.slug === "photography" || project.category === "photography";
   projectBack.href = "#home";
   projectBack.textContent = "Back home";
-  projectType.textContent = `${project.category || "gallery"} / ${project.year || "now"}`;
-  projectTitle.textContent = project.title;
-  projectDescription.textContent = project.description || "";
   const images = Array.isArray(project.images) && project.images.length ? project.images : [project.cover];
-  projectImages.replaceChildren(...images.filter(Boolean).map((src, index) => galleryImage(src, index)));
+  const frameCount = images.filter(Boolean).length;
+  projectType.textContent = `${project.category || "gallery"} / ${project.year || "now"} / ${frameCount} ${frameCount === 1 ? "frame" : "frames"}`;
+  projectTitle.textContent = project.title;
+  views.project.classList.toggle("is-photography", isPhotography);
+  renderProjectDescription(project.description || "", isPhotography);
+  projectImages.className = isPhotography ? "photo-marquee" : "image-stack";
+  projectImages.replaceChildren(
+    ...(isPhotography ? [photographyMarquee(images.filter(Boolean))] : images.filter(Boolean).map((src, index) => galleryImage(src, index)))
+  );
   showOnly("project");
   window.scrollTo({ top: 0, behavior: "auto" });
+}
+
+function renderProjectDescription(description, isPhotography = false) {
+  if (!isPhotography) {
+    projectDescription.textContent = description;
+    return;
+  }
+
+  const [mainText, cameraText] = description.split(". SX-70");
+  const mainLine = document.createElement("span");
+  mainLine.textContent = `${mainText}.`;
+
+  const cameraLine = document.createElement("span");
+  cameraLine.className = "camera-line";
+  cameraLine.textContent = cameraText === undefined ? "SX-70 and OneStep2." : `SX-70${cameraText}`;
+
+  projectDescription.replaceChildren(mainLine, cameraLine);
 }
 
 function renderProjectList(container, items) {
@@ -309,10 +332,6 @@ function projectRow(project, index) {
   title.className = "project-row-title";
   title.textContent = project.title;
 
-  const description = document.createElement("span");
-  description.className = "project-row-description";
-  description.textContent = project.description || "";
-
   const media = document.createElement("span");
   media.className = "project-row-media";
   if (project.cover) {
@@ -321,9 +340,9 @@ function projectRow(project, index) {
 
   const type = document.createElement("span");
   type.className = "project-row-type";
-  type.textContent = project.category === "photography" ? "Gallery" : "Selected work";
+  type.textContent = project.category === "photography" ? "Photo set" : "Work";
 
-  link.append(number, title, description, media, type);
+  link.append(number, title, media, type);
   return link;
 }
 
@@ -334,6 +353,50 @@ function galleryImage(src, index = 0) {
   img.loading = index < 2 ? "eager" : "lazy";
   img.decoding = "async";
   return img;
+}
+
+function photographyMarquee(sourceImages) {
+  const fallbackImages = ["sample/portrait-01.svg", "sample/portrait-02.svg", "sample/personal-01.svg", "sample/event-01.svg"];
+  const usableImages = sourceImages.length ? sourceImages : fallbackImages;
+  const cardCount = Math.max(9, usableImages.length * 2);
+  const stage = document.createElement("div");
+  stage.className = "polaroid-stage";
+
+  const lanes = [
+    { className: "polaroid-lane lane-slow", count: cardCount },
+    { className: "polaroid-lane lane-fast", count: cardCount },
+    { className: "polaroid-lane lane-drift", count: cardCount },
+  ];
+
+  lanes.forEach((lane, laneIndex) => {
+    const laneElement = document.createElement("div");
+    laneElement.className = lane.className;
+    laneElement.setAttribute("aria-hidden", "true");
+
+    for (let index = 0; index < lane.count; index += 1) {
+      const src = usableImages[(index + laneIndex) % usableImages.length];
+      laneElement.append(polaroidCard(src, index, laneIndex));
+    }
+
+    stage.append(laneElement);
+  });
+
+  return stage;
+}
+
+function polaroidCard(src, index, laneIndex) {
+  const rotations = [-8, 5, -3, 9, -11, 4, 7, -5, 2];
+  const figure = document.createElement("figure");
+  figure.className = "polaroid-card";
+  figure.style.setProperty("--r", `${rotations[(index + laneIndex * 2) % rotations.length]}deg`);
+  figure.style.setProperty("--shift", `${((index + laneIndex) % 3) * 18}px`);
+
+  const img = galleryImage(src, index);
+  const caption = document.createElement("figcaption");
+  caption.textContent = laneIndex === 1 && index % 4 === 1 ? "manvir.art" : "SX-70";
+
+  figure.append(img, caption);
+  return figure;
 }
 
 function setActive(routeName) {

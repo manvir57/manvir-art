@@ -28,6 +28,7 @@
   --canvas-glow-end: rgba(244, 241, 234, 0);
   --canvas-grid-soft: 143, 169, 154;
   --canvas-grid-ink: 23, 21, 18;
+  --shadow: rgb(23 21 18 / 10%);
   --max: 1520px;
   --mono: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
   --pixel: "Pixelify Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -61,6 +62,7 @@
   --canvas-glow-end: rgba(17, 19, 21, 0);
   --canvas-grid-soft: 120, 146, 135;
   --canvas-grid-ink: 240, 238, 232;
+  --shadow: rgb(0 0 0 / 28%);
 }
 
 * {
@@ -125,6 +127,15 @@ select {
 
 [hidden] {
   display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .atmosphere {
@@ -318,10 +329,58 @@ h1 {
 }
 
 .hero-bottom {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
   align-items: flex-end;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 24px;
+}
+
+.archive-card {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  color: var(--text);
+  background: var(--panel-bg);
+  border: 1px solid var(--line);
+  box-shadow: 10px 10px 0 var(--shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.archive-card div {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.archive-card div:last-child {
+  border-bottom: 0;
+}
+
+.archive-card dt,
+.archive-card dd {
+  margin: 0;
+}
+
+.archive-card dt {
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.archive-card dd {
+  min-width: 0;
+  color: var(--text);
+  font-family: var(--pixel);
+  font-size: 15px;
+  line-height: 1;
 }
 
 .control-board {
@@ -416,7 +475,6 @@ h1 {
 }
 
 .control-board p,
-.project-row-description,
 .project-header p,
 .empty-state {
   color: var(--copy);
@@ -430,6 +488,11 @@ h1 {
   flex-wrap: wrap;
   gap: 10px;
   padding-top: 28px;
+}
+
+.signal-strip {
+  justify-content: flex-end;
+  padding-top: 0;
 }
 
 .signal-strip a,
@@ -488,8 +551,18 @@ h1 {
   display: grid;
   grid-template-columns: minmax(180px, 0.34fr) minmax(0, 1fr);
   gap: 42px;
+  align-items: end;
   padding: 28px 0 38px;
   border-top: 1px solid var(--line-strong);
+}
+
+.section-note {
+  max-width: 560px;
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: clamp(12px, 1vw, 15px);
+  line-height: 1.45;
 }
 
 .project-list {
@@ -500,13 +573,26 @@ h1 {
 .project-row {
   position: relative;
   display: grid;
-  grid-template-columns: 76px minmax(180px, 0.8fr) minmax(220px, 0.9fr) minmax(160px, 240px) 130px;
-  gap: 18px;
+  grid-template-columns: 76px minmax(320px, 1fr) minmax(160px, 220px) 128px;
+  gap: 30px;
   align-items: center;
   min-height: 190px;
   padding: 22px 0;
   border-bottom: 1px solid var(--line);
   color: var(--text);
+}
+
+.project-row::after {
+  content: "";
+  position: absolute;
+  left: 76px;
+  bottom: 26px;
+  width: 38px;
+  height: 2px;
+  background: var(--clay);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms ease;
 }
 
 .project-row::before {
@@ -523,6 +609,10 @@ h1 {
   background: rgb(143 169 154 / 24%);
 }
 
+.project-row:hover::after {
+  transform: scaleX(1);
+}
+
 .project-number,
 .project-row-type {
   color: var(--dim);
@@ -532,12 +622,18 @@ h1 {
   text-transform: uppercase;
 }
 
+.project-row-type {
+  justify-self: end;
+  text-align: right;
+}
+
 .project-row-title {
-  font-size: clamp(34px, 6.2vw, 94px);
+  font-size: clamp(34px, 5.2vw, 82px);
   line-height: 0.9;
   font-weight: 400;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.035em;
   text-transform: uppercase;
+  min-width: 0;
 }
 
 .project-row-media {
@@ -546,6 +642,7 @@ h1 {
   background: var(--paper-soft);
   border: 1px solid var(--line);
   mix-blend-mode: multiply;
+  box-shadow: 7px 7px 0 var(--shadow);
 }
 
 .project-row-media img {
@@ -606,6 +703,190 @@ h1 {
   margin: 10px 0 0;
   font-size: 18px;
   line-height: 1.5;
+}
+
+.project-page.is-photography {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(360px, 30vw, 560px) minmax(0, 1fr);
+  width: 100vw;
+  max-width: none;
+  min-height: calc(100vh - 54px);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  overflow: hidden;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.project-page.is-photography::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 62% 46%, rgb(184 118 85 / 10%), transparent 0 25%),
+    linear-gradient(90deg, rgb(255 255 255 / 20%), transparent 42% 100%);
+  pointer-events: none;
+}
+
+.project-page.is-photography .project-header {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-column: 2;
+  grid-template-columns: minmax(0, 1fr);
+  place-self: center;
+  place-items: center;
+  width: min(760px, 78%);
+  margin: 0;
+  padding: 18vh 18px;
+  text-align: center;
+}
+
+.project-page.is-photography .back-link {
+  position: fixed;
+  left: 28px;
+  top: 82px;
+  z-index: 4;
+  padding: 9px 10px;
+  background: var(--chip-bg);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.project-page.is-photography .eyebrow {
+  margin-bottom: 18px;
+}
+
+.project-page.is-photography .project-header h1 {
+  grid-column: auto;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(58px, 8.8vw, 132px);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  text-transform: none;
+}
+
+.project-page.is-photography .project-header p:last-child {
+  grid-column: auto;
+  max-width: 560px;
+  margin: 20px auto 0;
+  color: var(--text);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(18px, 1.9vw, 25px);
+  line-height: 1.35;
+  text-align: center;
+  text-align-last: center;
+}
+
+.project-page.is-photography .project-header p:last-child span {
+  display: block;
+}
+
+.project-page.is-photography .project-header .camera-line {
+  margin-top: 7px;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.project-page.is-photography .photo-marquee {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, #000 0 31%, rgb(0 0 0 / 72%) 36%, transparent 46%);
+}
+
+.polaroid-stage {
+  position: absolute;
+  top: -18vh;
+  bottom: -18vh;
+  left: 0;
+  width: min(34vw, 520px);
+}
+
+.polaroid-lane {
+  position: absolute;
+  top: 0;
+  display: grid;
+  gap: 34px;
+  width: min(15vw, 190px);
+  animation: polaroid-scroll 38s linear infinite;
+  will-change: transform;
+}
+
+.lane-slow {
+  left: clamp(-78px, -2vw, -24px);
+}
+
+.lane-fast {
+  left: clamp(46px, 6vw, 104px);
+  animation-duration: 31s;
+  animation-direction: reverse;
+  transform: translateY(-18%);
+}
+
+.lane-drift {
+  left: clamp(160px, 14vw, 236px);
+  animation-duration: 44s;
+  opacity: 0.68;
+}
+
+.polaroid-card {
+  width: clamp(124px, 13.5vw, 188px);
+  margin: 0;
+  padding: clamp(8px, 1vw, 13px) clamp(8px, 1vw, 13px) clamp(24px, 2.4vw, 42px);
+  color: #191713;
+  background: #fffdf7;
+  border: 1px solid rgb(23 21 18 / 78%);
+  box-shadow: 9px 12px 0 rgb(23 21 18 / 12%);
+  transform: translateX(var(--shift)) rotate(var(--r));
+}
+
+.polaroid-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: #d8d3c7;
+  border: 1px solid rgb(23 21 18 / 16%);
+  filter: contrast(1.08) saturate(0.84) sepia(0.08);
+  mix-blend-mode: normal;
+}
+
+.polaroid-card figcaption {
+  min-height: 22px;
+  margin-top: clamp(8px, 1vw, 13px);
+  font-family: var(--pixel);
+  font-size: 13px;
+  line-height: 1;
+  text-align: center;
+  color: rgb(23 21 18 / 70%);
+}
+
+:root[data-theme="dark"] .project-page.is-photography::before {
+  background:
+    radial-gradient(circle at 60% 48%, rgb(135 174 187 / 10%), transparent 0 28%),
+    linear-gradient(90deg, rgb(255 255 255 / 4%), transparent 48% 100%);
+}
+
+:root[data-theme="dark"] .polaroid-card {
+  background: #eee9de;
+  border-color: rgb(240 238 232 / 28%);
+  box-shadow: 10px 13px 0 rgb(0 0 0 / 30%);
+}
+
+@keyframes polaroid-scroll {
+  from {
+    translate: 0 -4%;
+  }
+
+  to {
+    translate: 0 -52%;
+  }
 }
 
 .back-link {
@@ -674,7 +955,7 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding: 24px 28px;
+  padding: 24px 86px 24px 28px;
   color: var(--muted);
   border-top: 1px solid var(--line);
   font-family: var(--mono);
@@ -729,7 +1010,16 @@ h1 {
 
   .hero-bottom {
     align-items: flex-start;
-    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+
+  .archive-card {
+    width: min(100%, 420px);
+    box-shadow: 6px 6px 0 var(--shadow);
+  }
+
+  .signal-strip {
+    justify-content: flex-start;
   }
 
   .control-board {
@@ -749,19 +1039,90 @@ h1 {
   }
 
   .project-row-title,
-  .project-row-description,
   .project-row-media,
   .project-row-type {
     grid-column: 2;
+  }
+
+  .project-row::after {
+    left: 60px;
+    bottom: 18px;
   }
 
   .project-row-media {
     width: min(100%, 440px);
   }
 
+  .project-row-type {
+    justify-self: start;
+    text-align: left;
+  }
+
   .project-header h1,
   .project-header p:last-child {
     grid-column: auto;
+  }
+
+  .project-page.is-photography {
+    grid-template-columns: 132px minmax(0, 1fr);
+    min-height: calc(100vh - 48px);
+  }
+
+  .project-page.is-photography .project-header {
+    grid-column: 2;
+    min-height: calc(100vh - 48px);
+    width: min(100%, calc(100vw - 148px));
+    min-width: 0;
+    margin: 0;
+    padding: 22vh 10px 16vh;
+  }
+
+  .project-page.is-photography .back-link {
+    left: 16px;
+    top: 64px;
+  }
+
+  .project-page.is-photography .project-header h1 {
+    font-size: clamp(40px, 12vw, 72px);
+  }
+
+  .project-page.is-photography .project-header p:last-child {
+    font-size: clamp(15px, 4.2vw, 18px);
+  }
+
+  .project-page.is-photography .photo-marquee {
+    mask-image: linear-gradient(90deg, #000 0 34%, rgb(0 0 0 / 46%) 42%, transparent 58%);
+  }
+
+  .polaroid-stage {
+    top: -10vh;
+    bottom: -12vh;
+    left: 0;
+    width: 132px;
+  }
+
+  .polaroid-lane {
+    width: 128px;
+    gap: 24px;
+    opacity: 0.58;
+  }
+
+  .lane-slow {
+    left: -64px;
+  }
+
+  .lane-fast {
+    left: -8px;
+  }
+
+  .lane-drift {
+    display: none;
+  }
+
+  .polaroid-card {
+    width: 148px;
+    padding: 8px 8px 26px;
+    box-shadow: 5px 7px 0 rgb(23 21 18 / 10%);
   }
 
   .image-stack {
@@ -776,7 +1137,42 @@ h1 {
   .site-footer {
     align-items: flex-start;
     flex-direction: column;
-    padding: 22px 16px;
+    padding: 22px 72px 22px 16px;
+  }
+}
+
+@media (max-width: 1180px) and (min-width: 941px) {
+  .project-row {
+    grid-template-columns: 58px minmax(0, 1fr) minmax(150px, 220px) 110px;
+    gap: 22px;
+  }
+
+  .project-row-media {
+    grid-column: 3;
+    grid-row: auto;
+  }
+
+  .project-row-type {
+    grid-column: 4;
+    grid-row: auto;
+  }
+
+  .project-page.is-photography .project-header {
+    width: min(650px, 84%);
+    min-width: 0;
+    margin: 0;
+  }
+
+  .project-page.is-photography .photo-marquee {
+    mask-image: linear-gradient(90deg, #000 0 36%, rgb(0 0 0 / 62%) 42%, transparent 54%);
+  }
+
+  .polaroid-stage {
+    width: 390px;
+  }
+
+  .lane-drift {
+    display: none;
   }
 }
 
@@ -808,6 +1204,43 @@ h1 {
   .theme-toggle svg {
     width: 14px;
     height: 14px;
+  }
+
+  .project-page.is-photography .project-header {
+    width: min(100%, calc(100vw - 118px));
+  }
+
+  .project-page.is-photography .project-header h1 {
+    font-size: clamp(34px, 10.5vw, 54px);
+  }
+
+  .project-page.is-photography .project-header p:last-child {
+    font-size: 14px;
+  }
+
+  .project-page.is-photography .photo-marquee {
+    mask-image: linear-gradient(90deg, #000 0 24%, rgb(0 0 0 / 44%) 32%, transparent 46%);
+  }
+
+  .polaroid-stage {
+    width: 94px;
+  }
+
+  .polaroid-lane {
+    width: 104px;
+    opacity: 0.66;
+  }
+
+  .lane-slow {
+    left: -74px;
+  }
+
+  .lane-fast {
+    display: none;
+  }
+
+  .polaroid-card {
+    width: 118px;
   }
 
   .board-row {
