@@ -21,10 +21,18 @@
       "year": 2026,
       "category": "photography",
       "description": "Portrait, lifestyle, and event photography.",
-      "cover": "sample/portrait-01.svg",
+      "cover": "uploads/polaroids/polaroid-01.jpg",
       "images": [
-        "sample/portrait-01.svg",
-        "sample/portrait-02.svg"
+        "uploads/polaroids/polaroid-01.jpg",
+        "uploads/polaroids/polaroid-02.jpg",
+        "uploads/polaroids/polaroid-03.jpg",
+        "uploads/polaroids/polaroid-04.jpg",
+        "uploads/polaroids/polaroid-05.jpg",
+        "uploads/polaroids/polaroid-06.jpg",
+        "uploads/polaroids/polaroid-07.jpg",
+        "uploads/polaroids/polaroid-08.jpg",
+        "uploads/polaroids/polaroid-09.jpg",
+        "uploads/polaroids/polaroid-10.jpg"
       ],
       "published": true,
       "featured": true

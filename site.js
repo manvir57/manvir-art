@@ -31,8 +31,19 @@ const fallbackProjects = [
     year: 2026,
     category: "photography",
     description: "A collection of polaroids I have taken over the years. SX-70 and OneStep2.",
-    cover: "sample/portrait-01.svg",
-    images: ["sample/portrait-01.svg", "sample/portrait-02.svg"],
+    cover: "uploads/polaroids/polaroid-01.jpg",
+    images: [
+      "uploads/polaroids/polaroid-01.jpg",
+      "uploads/polaroids/polaroid-02.jpg",
+      "uploads/polaroids/polaroid-03.jpg",
+      "uploads/polaroids/polaroid-04.jpg",
+      "uploads/polaroids/polaroid-05.jpg",
+      "uploads/polaroids/polaroid-06.jpg",
+      "uploads/polaroids/polaroid-07.jpg",
+      "uploads/polaroids/polaroid-08.jpg",
+      "uploads/polaroids/polaroid-09.jpg",
+      "uploads/polaroids/polaroid-10.jpg",
+    ],
     published: true,
     featured: true,
   },
@@ -356,7 +367,12 @@ function galleryImage(src, index = 0) {
 }
 
 function photographyMarquee(sourceImages) {
-  const fallbackImages = ["sample/portrait-01.svg", "sample/portrait-02.svg", "sample/personal-01.svg", "sample/event-01.svg"];
+  const fallbackImages = [
+    "uploads/polaroids/polaroid-01.jpg",
+    "uploads/polaroids/polaroid-02.jpg",
+    "uploads/polaroids/polaroid-03.jpg",
+    "uploads/polaroids/polaroid-04.jpg",
+  ];
   const usableImages = sourceImages.length ? sourceImages : fallbackImages;
   const cardCount = Math.max(9, usableImages.length * 2);
   const stage = document.createElement("div");
