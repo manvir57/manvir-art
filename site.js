@@ -306,6 +306,7 @@ function renderProject(slug) {
   }
 
   const isPhotography = project.slug === "photography" || project.category === "photography";
+  const isConstruction = project.slug === "projects";
   projectBack.href = "#home";
   projectBack.textContent = "Back home";
   const images = Array.isArray(project.images) && project.images.length ? project.images : [project.cover];
@@ -313,13 +314,16 @@ function renderProject(slug) {
   projectType.textContent = `${project.category || "gallery"} / ${project.year || "now"} / ${frameCount} ${frameCount === 1 ? "frame" : "frames"}`;
   projectTitle.textContent = project.title;
   views.project.classList.toggle("is-photography", isPhotography);
+  views.project.classList.toggle("is-construction", isConstruction);
   renderProjectDescription(project.description || "", isPhotography);
   projectImages.className = isPhotography ? "photo-marquee" : "image-stack";
   projectImages.replaceChildren(
     ...(
       isPhotography
         ? [photographyMarquee(images.filter(Boolean))]
-        : [projectConstructionNote(), ...images.filter(Boolean).map((src, index) => galleryImage(src, index))]
+        : isConstruction
+          ? [projectConstructionNote()]
+          : images.filter(Boolean).map((src, index) => galleryImage(src, index))
     )
   );
   showOnly("project");
@@ -331,13 +335,10 @@ function projectConstructionNote() {
   note.className = "project-sticky-note";
   note.setAttribute("aria-label", "Projects under construction");
 
-  const eyebrow = document.createElement("span");
-  eyebrow.textContent = "under construction";
-
   const body = document.createElement("p");
-  body.textContent = "Projects are being gathered, edited, and arranged. Check back soon.";
+  body.textContent = "UNDER CONSTRUCTION";
 
-  note.append(eyebrow, body);
+  note.append(body);
   return note;
 }
 
