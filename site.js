@@ -2,7 +2,7 @@ let projects = [];
 let site = {};
 
 const fallbackSite = {
-  name: "Manvir Khangura",
+  name: "Manvir",
   metaDescription: "manvir.art portfolio by Manvir Khangura.",
   kicker: "Visual Archive",
   headline: "Manvir Khangura",
@@ -43,6 +43,8 @@ const fallbackProjects = [
       "uploads/polaroids/polaroid-08.jpg",
       "uploads/polaroids/polaroid-09.jpg",
       "uploads/polaroids/polaroid-10.jpg",
+      "uploads/polaroids/polaroid-11.jpg",
+      "uploads/polaroids/polaroid-12.jpg",
     ],
     published: true,
     featured: true,
@@ -68,6 +70,16 @@ const projectImages = document.querySelector("#project-images");
 const themeToggle = document.querySelector("#theme-toggle");
 const controlsToggle = document.querySelector("#controls-toggle");
 const siteControls = document.querySelector("#site-controls");
+const signatureForm = document.querySelector("#signature-form");
+const signatureCanvas = document.querySelector("#signature-canvas");
+const clearSignature = document.querySelector("#clear-signature");
+const stickyWall = document.querySelector("#sticky-wall");
+const wallStatus = document.querySelector("#wall-status");
+const wallNote = document.querySelector("#wall-note");
+const wallModeButtons = document.querySelectorAll("[data-wall-mode]");
+const drawnNoteMarker = "__drawn_sticky_note__";
+const blankNoteImage =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=";
 
 const atmosphere = {
   canvas: document.querySelector("#atmosphere"),
@@ -89,6 +101,7 @@ async function init() {
   setupTheme();
   setupAtmosphere();
   setupControlBoard();
+  setupSignatureWall();
 
   let projectData = { projects: fallbackProjects };
   site = fallbackSite;
@@ -252,6 +265,7 @@ function route() {
 
   if (first === "contact") {
     showOnly("contact");
+    requestAnimationFrame(resizeSignatureCanvas);
     return;
   }
 
@@ -302,10 +316,29 @@ function renderProject(slug) {
   renderProjectDescription(project.description || "", isPhotography);
   projectImages.className = isPhotography ? "photo-marquee" : "image-stack";
   projectImages.replaceChildren(
-    ...(isPhotography ? [photographyMarquee(images.filter(Boolean))] : images.filter(Boolean).map((src, index) => galleryImage(src, index)))
+    ...(
+      isPhotography
+        ? [photographyMarquee(images.filter(Boolean))]
+        : [projectConstructionNote(), ...images.filter(Boolean).map((src, index) => galleryImage(src, index))]
+    )
   );
   showOnly("project");
   window.scrollTo({ top: 0, behavior: "auto" });
+}
+
+function projectConstructionNote() {
+  const note = document.createElement("aside");
+  note.className = "project-sticky-note";
+  note.setAttribute("aria-label", "Projects under construction");
+
+  const eyebrow = document.createElement("span");
+  eyebrow.textContent = "under construction";
+
+  const body = document.createElement("p");
+  body.textContent = "Projects are being gathered, edited, and arranged. Check back soon.";
+
+  note.append(eyebrow, body);
+  return note;
 }
 
 function renderProjectDescription(description, isPhotography = false) {
@@ -326,6 +359,7 @@ function renderProjectDescription(description, isPhotography = false) {
 }
 
 function renderProjectList(container, items) {
+  if (!container) return;
   container.replaceChildren(...items.map((project, index) => projectRow(project, index)));
 }
 
@@ -372,6 +406,8 @@ function photographyMarquee(sourceImages) {
     "uploads/polaroids/polaroid-02.jpg",
     "uploads/polaroids/polaroid-03.jpg",
     "uploads/polaroids/polaroid-04.jpg",
+    "uploads/polaroids/polaroid-11.jpg",
+    "uploads/polaroids/polaroid-12.jpg",
   ];
   const usableImages = sourceImages.length ? sourceImages : fallbackImages;
   const cardCount = Math.max(9, usableImages.length * 2);
@@ -419,6 +455,256 @@ function setActive(routeName) {
   document.querySelectorAll("[data-route]").forEach((link) => {
     link.classList.toggle("active", link.dataset.route === routeName);
   });
+}
+
+function setupSignatureWall() {
+  if (!signatureForm || !signatureCanvas || !stickyWall) return;
+
+  const ctx = signatureCanvas.getContext("2d");
+  const state = {
+    drawing: false,
+    hasDrawing: false,
+    mode: "type",
+  };
+
+  resizeSignatureCanvas();
+  window.addEventListener("resize", resizeSignatureCanvas);
+
+  wallModeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      state.mode = button.dataset.wallMode || "type";
+      signatureForm.classList.toggle("draw-mode", state.mode === "draw");
+      wallModeButtons.forEach((modeButton) => {
+        modeButton.classList.toggle("active", modeButton === button);
+      });
+      if (state.mode === "draw") {
+        requestAnimationFrame(resizeSignatureCanvas);
+        signatureCanvas.focus();
+      } else {
+        wallNote.focus();
+      }
+    });
+  });
+
+  signatureCanvas.addEventListener("pointerdown", (event) => {
+    resizeSignatureCanvas();
+    state.drawing = true;
+    state.hasDrawing = true;
+    signatureCanvas.setPointerCapture(event.pointerId);
+    const point = signaturePoint(event);
+    ctx.beginPath();
+    ctx.moveTo(point.x, point.y);
+  });
+
+  signatureCanvas.addEventListener("pointermove", (event) => {
+    if (!state.drawing) return;
+    event.preventDefault();
+    const point = signaturePoint(event);
+    ctx.lineTo(point.x, point.y);
+    ctx.stroke();
+  });
+
+  ["pointerup", "pointercancel", "pointerleave"].forEach((eventName) => {
+    signatureCanvas.addEventListener(eventName, () => {
+      state.drawing = false;
+    });
+  });
+
+  if (clearSignature) {
+    clearSignature.addEventListener("click", () => {
+      clearSignatureCanvas();
+      state.hasDrawing = false;
+    });
+  }
+
+  signatureForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const note = wallNote.value.trim().slice(0, 140);
+    const isDrawMode = state.mode === "draw";
+    if (!isDrawMode && !note) {
+      setWallStatus("Write a little note first.");
+      return;
+    }
+    if (isDrawMode && !state.hasDrawing) {
+      setWallStatus("Draw something on the sticky first.");
+      return;
+    }
+
+    const entry = {
+      note_text: isDrawMode ? drawnNoteMarker : note,
+      signature_data: isDrawMode ? signatureCanvas.toDataURL("image/png") : blankNoteImage,
+      created_at: new Date().toISOString(),
+    };
+
+    setWallStatus("Posting...");
+    const saved = await saveWallEntry(entry);
+    prependWallEntry(saved);
+    signatureForm.reset();
+    clearSignatureCanvas();
+    state.hasDrawing = false;
+    setWallStatus(saved.isLocal ? "Posted on this device." : "Posted to the wall.");
+  });
+
+  loadWallEntries();
+}
+
+function resizeSignatureCanvas() {
+  if (!signatureCanvas) return;
+  const rect = signatureCanvas.getBoundingClientRect();
+  const width = Math.max(240, Math.round(rect.width || signatureCanvas.clientWidth || 520));
+  const height = Math.max(220, Math.round(rect.height || 300));
+  const ratio = Math.min(window.devicePixelRatio || 1, 2);
+  const nextWidth = Math.floor(width * ratio);
+  const nextHeight = Math.floor(height * ratio);
+  const ctx = signatureCanvas.getContext("2d");
+
+  if (signatureCanvas.width !== nextWidth || signatureCanvas.height !== nextHeight) {
+    signatureCanvas.width = nextWidth;
+    signatureCanvas.height = nextHeight;
+  }
+
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  prepareSignatureStroke(ctx);
+}
+
+function signaturePoint(event) {
+  const rect = signatureCanvas.getBoundingClientRect();
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top,
+  };
+}
+
+function prepareSignatureStroke(ctx) {
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#191713";
+}
+
+function clearSignatureCanvas() {
+  if (!signatureCanvas) return;
+  const ctx = signatureCanvas.getContext("2d");
+  ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+  prepareSignatureStroke(ctx);
+}
+
+async function loadWallEntries() {
+  const remoteEntries = await fetchWallEntries();
+  const entries = remoteEntries.length ? remoteEntries : localWallEntries();
+  renderWallEntries(entries);
+}
+
+async function fetchWallEntries() {
+  const config = window.PORTFOLIO_ADMIN_CONFIG || {};
+  if (!supabaseConfigured(config)) return [];
+
+  try {
+    const endpoint = `${config.supabaseUrl}/rest/v1/signature_wall?select=id,note_text,signature_data,created_at&order=created_at.desc&limit=24`;
+    const response = await fetch(endpoint, {
+      headers: {
+        apikey: config.supabaseAnonKey,
+        Authorization: `Bearer ${config.supabaseAnonKey}`,
+      },
+    });
+    if (!response.ok) return [];
+    return await response.json();
+  } catch {
+    return [];
+  }
+}
+
+async function saveWallEntry(entry) {
+  const config = window.PORTFOLIO_ADMIN_CONFIG || {};
+  if (supabaseConfigured(config)) {
+    try {
+      const endpoint = `${config.supabaseUrl}/rest/v1/signature_wall`;
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          apikey: config.supabaseAnonKey,
+          Authorization: `Bearer ${config.supabaseAnonKey}`,
+          "Content-Type": "application/json",
+          Prefer: "return=representation",
+        },
+        body: JSON.stringify(entry),
+      });
+      if (response.ok) {
+        const [savedEntry] = await response.json();
+        return savedEntry || entry;
+      }
+    } catch {
+      // Fall through to local storage when the shared wall is unavailable.
+    }
+  }
+
+  const localEntry = { ...entry, id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), isLocal: true };
+  const entries = [localEntry, ...localWallEntries()].slice(0, 24);
+  localStorage.setItem("manvir-signature-wall", JSON.stringify(entries));
+  return localEntry;
+}
+
+function supabaseConfigured(config) {
+  return (
+    config.supabaseUrl &&
+    config.supabaseAnonKey &&
+    !config.supabaseUrl.includes("YOUR_PROJECT_ID") &&
+    !config.supabaseAnonKey.includes("YOUR_SUPABASE_ANON_KEY")
+  );
+}
+
+function localWallEntries() {
+  try {
+    return JSON.parse(localStorage.getItem("manvir-signature-wall") || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function renderWallEntries(entries) {
+  if (!stickyWall) return;
+  if (!entries.length) {
+    const empty = document.createElement("p");
+    empty.className = "wall-empty";
+    empty.textContent = "No signatures yet. Be the first one on the wall.";
+    stickyWall.replaceChildren(empty);
+    return;
+  }
+  stickyWall.replaceChildren(...entries.map((entry, index) => wallSticky(entry, index)));
+}
+
+function prependWallEntry(entry) {
+  if (!stickyWall) return;
+  const empty = stickyWall.querySelector(".wall-empty");
+  if (empty) empty.remove();
+  stickyWall.prepend(wallSticky(entry, 0));
+}
+
+function wallSticky(entry, index) {
+  const note = document.createElement("article");
+  note.className = "wall-sticky";
+  note.style.setProperty("--tilt", `${[-2, 1.4, -0.7, 2.2, -1.5][index % 5]}deg`);
+
+  if (entry.note_text === drawnNoteMarker) {
+    note.classList.add("drawn-sticky");
+    const drawing = document.createElement("img");
+    drawing.src = entry.signature_data;
+    drawing.alt = "Drawn sticky note";
+    drawing.loading = "lazy";
+    note.append(drawing);
+    return note;
+  }
+
+  const text = document.createElement("p");
+  text.textContent = entry.note_text || "";
+
+  note.append(text);
+  return note;
+}
+
+function setWallStatus(message) {
+  if (!wallStatus) return;
+  wallStatus.textContent = message;
 }
 
 function setupControlBoard() {

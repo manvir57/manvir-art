@@ -66,3 +66,38 @@ on storage.objects
 for delete
 to authenticated
 using (bucket_id = 'portfolio-images');
+
+create table if not exists public.signature_wall (
+  id uuid primary key default gen_random_uuid(),
+  note_text text not null check (char_length(note_text) between 1 and 140),
+  signature_data text not null check (signature_data like 'data:image/png;base64,%'),
+  created_at timestamptz not null default now()
+);
+
+alter table public.signature_wall enable row level security;
+
+grant select, insert on public.signature_wall to anon, authenticated;
+grant delete on public.signature_wall to authenticated;
+
+drop policy if exists "Anyone can read signature wall" on public.signature_wall;
+create policy "Anyone can read signature wall"
+on public.signature_wall
+for select
+using (true);
+
+drop policy if exists "Anyone can sign the wall" on public.signature_wall;
+create policy "Anyone can sign the wall"
+on public.signature_wall
+for insert
+to anon, authenticated
+with check (
+  char_length(note_text) between 1 and 140
+  and signature_data like 'data:image/png;base64,%'
+);
+
+drop policy if exists "Authenticated admin can remove signature wall notes" on public.signature_wall;
+create policy "Authenticated admin can remove signature wall notes"
+on public.signature_wall
+for delete
+to authenticated
+using (true);

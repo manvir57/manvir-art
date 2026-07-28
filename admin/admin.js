@@ -13,10 +13,14 @@ const previewGrid = document.querySelector("#preview-grid");
 const reviewSummary = document.querySelector("#review-summary");
 const confirmUploadButton = document.querySelector("#confirm-upload-button");
 const clearReviewButton = document.querySelector("#clear-review-button");
+const wallAdminStatus = document.querySelector("#wall-admin-status");
+const wallAdminList = document.querySelector("#wall-admin-list");
+const refreshWallButton = document.querySelector("#refresh-wall-button");
 
 const targetMinBytes = 2 * 1024 * 1024;
 const targetMaxBytes = 5 * 1024 * 1024;
 const maxImageEdge = 3200;
+const drawnNoteMarker = "__drawn_sticky_note__";
 
 let pendingUpload = null;
 let previewUrls = [];
@@ -55,6 +59,7 @@ async function init() {
 function setLoggedIn(isLoggedIn) {
   loginPanel.hidden = isLoggedIn;
   uploadPanel.hidden = !isLoggedIn;
+  if (isLoggedIn) loadWallNotes();
 }
 
 loginForm.addEventListener("submit", async (event) => {
@@ -136,6 +141,82 @@ clearReviewButton.addEventListener("click", () => {
   clearPreviewUrls();
 });
 
+if (refreshWallButton) {
+  refreshWallButton.addEventListener("click", loadWallNotes);
+}
+
+async function loadWallNotes() {
+  if (!wallAdminList || !supabase) return;
+  wallAdminStatus.textContent = "Loading wall notes...";
+  wallAdminList.replaceChildren();
+
+  const { data, error } = await supabase
+    .from("signature_wall")
+    .select("id,note_text,signature_data,created_at")
+    .order("created_at", { ascending: false })
+    .limit(40);
+
+  if (error) {
+    wallAdminStatus.textContent = friendlyWallError(error.message);
+    return;
+  }
+
+  wallAdminStatus.textContent = data.length ? `${data.length} note${data.length === 1 ? "" : "s"} on the wall.` : "No notes yet.";
+  wallAdminList.replaceChildren(...data.map(renderWallAdminItem));
+}
+
+function renderWallAdminItem(entry) {
+  const item = document.createElement("article");
+  item.className = "wall-admin-card";
+
+  const preview = document.createElement("div");
+  preview.className = "wall-admin-preview";
+
+  if (entry.note_text === drawnNoteMarker) {
+    const drawing = document.createElement("img");
+    drawing.src = entry.signature_data;
+    drawing.alt = "Drawn wall note";
+    preview.append(drawing);
+  } else {
+    const text = document.createElement("p");
+    text.textContent = entry.note_text || "";
+    preview.append(text);
+  }
+
+  const meta = document.createElement("div");
+  meta.className = "wall-admin-meta";
+
+  const date = document.createElement("span");
+  date.textContent = entry.created_at ? new Date(entry.created_at).toLocaleString() : "Signature wall note";
+
+  const removeButton = document.createElement("button");
+  removeButton.type = "button";
+  removeButton.className = "ghost-button danger-button";
+  removeButton.textContent = "Remove";
+  removeButton.addEventListener("click", () => removeWallNote(entry.id, item));
+
+  meta.append(date, removeButton);
+  item.append(preview, meta);
+  return item;
+}
+
+async function removeWallNote(id, item) {
+  if (!id) return;
+  const confirmed = window.confirm("Remove this sticky note from the wall?");
+  if (!confirmed) return;
+
+  wallAdminStatus.textContent = "Removing note...";
+  const { error } = await supabase.from("signature_wall").delete().eq("id", id);
+
+  if (error) {
+    wallAdminStatus.textContent = friendlyWallError(error.message);
+    return;
+  }
+
+  item.remove();
+  wallAdminStatus.textContent = "Removed.";
+}
+
 async function uploadImage({ file, gallerySlug, caption }) {
   const displayName = file.originalName || file.name;
   const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-");
@@ -196,6 +277,16 @@ function friendlyDatabaseError(message) {
   }
   if (/row-level security/i.test(message)) {
     return "Blocked by Supabase Row Level Security. Check that the insert policy for portfolio_images allows authenticated users.";
+  }
+  return message;
+}
+
+function friendlyWallError(message) {
+  if (/permission denied for table signature_wall/i.test(message)) {
+    return "Database permission denied. Run the latest supabase/setup.sql file in Supabase SQL Editor, then try again.";
+  }
+  if (/row-level security/i.test(message)) {
+    return "Blocked by Supabase Row Level Security. Check that the delete policy for signature_wall allows authenticated users.";
   }
   return message;
 }

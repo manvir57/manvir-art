@@ -4,21 +4,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Manvir Khangura portfolio: marketing, creative direction, photography, and culture-driven content." data-site="metaDescription" />
-    <title>Manvir Khangura - Portfolio</title>
+    <title>Manvir</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css?v=20260725-polaroids" />
+    <link rel="stylesheet" href="styles.css?v=20260728-project-note" />
     <script src="content/admin-config.js"></script>
-    <script type="module" src="site.js?v=20260725-polaroids"></script>
+    <script type="module" src="site.js?v=20260728-project-note"></script>
   </head>
   <body>
     <canvas class="atmosphere" id="atmosphere" aria-hidden="true"></canvas>
 
     <header class="site-header">
-      <a class="brand" href="#home" data-route="home" data-site="name">Manvir Khangura</a>
+      <a class="brand" href="#home" data-route="home" data-site="name">Manvir</a>
       <nav class="site-nav" aria-label="Primary navigation">
-        <a href="#section/projects" data-route="projects">Projects</a>
-        <a href="#section/photography" data-route="photography">Photography</a>
-        <a href="#contact" data-route="contact">Contact</a>
+        <a href="#section/projects" data-route="projects">projects</a>
+        <a href="#section/photography" data-route="photography">photography</a>
+        <a href="#contact" data-route="contact">contact</a>
       </nav>
       <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode">
         <svg class="sun-icon" viewBox="0 0 48 48" aria-hidden="true">
@@ -47,41 +47,14 @@
       <section class="hero page-shell" data-view="home" aria-labelledby="intro-title">
         <div class="hero-grid">
           <div class="hero-copy">
-            <p class="kicker" data-site="kicker">Visual Archive</p>
             <h1 id="intro-title" data-site="headline">Manvir Khangura</h1>
             <p class="hero-statement" data-site="description">Marketing/Creative</p>
+            <div class="signal-strip" aria-label="Social links" data-site="heroLinks">
+              <a href="https://www.linkedin.com/in/manvir-khangura" target="_blank" rel="noreferrer" aria-label="LinkedIn">LinkedIn</a>
+              <a href="https://www.instagram.com/manvir.s_/" target="_blank" rel="noreferrer" aria-label="Instagram">Instagram</a>
+            </div>
           </div>
         </div>
-
-        <div class="hero-bottom">
-          <dl class="archive-card" aria-label="Archive details">
-            <div>
-              <dt>Field</dt>
-              <dd>Marketing / Creative</dd>
-            </div>
-            <div>
-              <dt>Mode</dt>
-              <dd>Work, photos, fragments</dd>
-            </div>
-            <div>
-              <dt>Status</dt>
-              <dd>Building the record</dd>
-            </div>
-          </dl>
-          <div class="signal-strip" aria-label="Social links" data-site="heroLinks">
-            <a href="https://www.linkedin.com/in/manvir-khangura" target="_blank" rel="noreferrer" aria-label="LinkedIn">LinkedIn</a>
-            <a href="https://www.instagram.com/manvir.s_/" target="_blank" rel="noreferrer" aria-label="Instagram">Instagram</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="work-index page-shell" data-view="home" aria-labelledby="work-title">
-        <div class="section-heading">
-          <p class="eyebrow">Index</p>
-          <h2 id="work-title" class="visually-hidden">Selected work</h2>
-          <p class="section-note">A living archive of projects, images, and the visual language around them.</p>
-        </div>
-        <div class="project-list" id="featured-grid"></div>
       </section>
 
       <section class="archive page-shell" data-view="archive" hidden>
@@ -103,16 +76,33 @@
         <div class="image-stack" id="project-images"></div>
       </article>
 
-      <section class="contact page-shell" data-view="contact" hidden aria-labelledby="contact-title">
-        <p class="eyebrow">Contact</p>
-        <h1 id="contact-title" data-site="contactHeading">Available for marketing, creative direction, photography, and culture-driven content.</h1>
-        <div class="contact-list" data-site="contactLinks">
-          <a href="https://www.linkedin.com/in/manvir-khangura" target="_blank" rel="noreferrer">LinkedIn</a>
-          <a href="https://www.instagram.com/manvir.s_/" target="_blank" rel="noreferrer">Instagram</a>
-          <span>Marketing</span>
-          <span>Creative</span>
-          <span>Photography</span>
+      <section class="contact signature-wall-page page-shell" data-view="contact" hidden aria-labelledby="contact-title">
+        <div class="signature-intro">
+          <p class="eyebrow">Contact</p>
+          <h1 id="contact-title">Signature wall</h1>
+          <p class="wall-copy">Leave a typed note or draw directly onto a sticky.</p>
+          <div class="contact-list" data-site="contactLinks">
+            <a href="https://www.linkedin.com/in/manvir-khangura" target="_blank" rel="noreferrer">LinkedIn</a>
+            <a href="https://www.instagram.com/manvir.s_/" target="_blank" rel="noreferrer">Instagram</a>
+          </div>
         </div>
+        <form class="signature-form" id="signature-form">
+          <div class="wall-mode" role="group" aria-label="Choose note style">
+            <button class="active" type="button" data-wall-mode="type">Type</button>
+            <button type="button" data-wall-mode="draw">Draw</button>
+          </div>
+          <div class="sticky-composer">
+            <textarea id="wall-note" name="note" maxlength="140" rows="5" placeholder="write something small"></textarea>
+            <div class="signature-pad-top">
+              <span>Draw note</span>
+              <button type="button" id="clear-signature">Clear</button>
+            </div>
+            <canvas id="signature-canvas" width="520" height="300" tabindex="0" aria-label="Draw a note"></canvas>
+          </div>
+          <button class="wall-submit" type="submit">Post note</button>
+          <p class="wall-status" id="wall-status" aria-live="polite"></p>
+        </form>
+        <div class="sticky-wall" id="sticky-wall" aria-label="Signature wall notes"></div>
       </section>
     </main>
 
